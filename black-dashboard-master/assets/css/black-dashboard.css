@@ -1650,6 +1650,15 @@ pre code {
   border-top: 0.0625rem solid #e3e3e3;
 }
 
+#tarjetas {
+  display: none;
+}
+
+#locales {
+  display: none;
+}
+
+
 .table thead th {
   vertical-align: bottom;
   border-bottom: 0.125rem solid #e3e3e3;
