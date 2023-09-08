@@ -20451,4 +20451,14 @@ Copyright (c) 2015 Daniel Eden
   padding-right: 0;
 }
 
+.my-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* This pushes 1 and 3 to the extremes */
+  align-items: center; /* This centers 2 vertically */
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */
