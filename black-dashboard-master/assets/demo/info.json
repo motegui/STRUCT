@@ -1,0 +1,20 @@
+[
+    {
+        "bank": "BBVA Frances",
+        "card": "Visa",
+        "type": "Crédito",
+        "id": 1
+    },
+    {
+        "bank": "Citi",
+        "card": "Amex",
+        "type": "Crédito",
+        "id": 2
+    },
+    {
+        "bank": "Provincia",
+        "card": "Visa",
+        "type": "Débito",
+        "id": 3
+    }
+]
