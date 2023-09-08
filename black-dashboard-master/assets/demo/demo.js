@@ -111,23 +111,7 @@ demo = {
 
   initDashboardPageCharts: function () {
 
-    
-
-    var tarjetas = document.getElementById("tarjetas");
-    var locales = document.getElementById("locales");
-
-    $("#0").click(function () {
-      tarjetas.style.display = "none";
-      locales.style.display = "none";
-    })
-
-    $("#1").click(function () {
-      tarjetas.style.display = "none";
-      locales.style.display = "block";
-    })
-
-    $("#2").click(function () {
-      //data dump from json scrap
+    //data dump from json scrap
 
     fetch("../assets/demo/info.json")  //agarra la data
     .then(function(response){
@@ -151,8 +135,23 @@ demo = {
 
     placeholder.innerHTML = out ;   //drop the data in the html
   })
+
+    var tarjetas = document.getElementById("tarjetas");
+    var locales = document.getElementById("locales");
+
+    $("#0").click(function () {
+      tarjetas.style.display = "none";
       locales.style.display = "none";
-      tarjetas.style.display = "block";
+    })
+
+    $("#1").click(function () {
+      tarjetas.style.display = "none";
+      locales.style.display = "table";
+    })
+
+    $("#2").click(function () {
+      locales.style.display = "none";
+      tarjetas.style.display = "table";
     });
 
     gradientChartOptionsConfigurationWithTooltipBlue = {
