@@ -246,7 +246,7 @@
   <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
   <!--  Google Maps Plugin    -->
   <!-- Place this tag in your head or just before your close body tag. -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDy1IMXoe2W8nNxRovfDD7eaXaszs0PNdM"></script>
   <!-- Chart JS -->
   <script src="../assets/js/plugins/chartjs.min.js"></script>
   <!--  Notifications Plugin    -->
@@ -379,6 +379,29 @@
         application: "black-dashboard-free"
       });
   </script>
+  <!-- Agrega un contenedor donde se mostrará el mapa -->
+<div id="map-container" style="width: 100%; height: 500px;"></div>
+  <script>
+    // Código JavaScript para inicializar y mostrar el mapa
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map-container'), {
+        center: { lat: -34.397, lng: 150.644 }, // Coordenadas de ejemplo
+        zoom: 8, // Nivel de zoom
+      });
+      if( map == null)
+        console.log("hola")
+      else
+        console.log("chau")
+    }
+  </script>
+  <!-- Llama a la función initMap para cargar el mapa -->
+<script>
+  initMap();
+</script>
+
+
 </body>
+
+
 
 </html>
