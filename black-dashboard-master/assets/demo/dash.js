@@ -10,7 +10,7 @@ dash = {
             tarjetas.style.display = "none";
             locales.style.display = "table";
           });
-  
+   
           $("#2").click(function () {
             locales.style.display = "none";
             tarjetas.style.display = "table";
@@ -49,10 +49,7 @@ dash = {
                 alert('Scraping finalizado.')
             })
         });
-
-        
-        
-
-        
     }
-}
+
+    
+};
