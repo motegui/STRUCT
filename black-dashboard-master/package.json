@@ -2,7 +2,7 @@
   "name": "black-dashboard",
   "version": "1.0.0",
   "description": "Black Dasboard, a Black Desgin. Coded by Creative Tim",
-  "main": "index.html",
+  "main": "./html/dashboard.html",
   "directories": {
     "example": "root"
   },
