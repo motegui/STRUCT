@@ -4,6 +4,7 @@ var sass = require('gulp-sass')(require('sass'));
 var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var open = require('gulp-open');
+var server = require('gulp-webserver')
 
 var Paths = {
   HERE: './',
@@ -12,6 +13,17 @@ var Paths = {
   SCSS_TOOLKIT_SOURCES: './assets/scss/black-dashboard.scss',
   SCSS: './assets/scss/**/**'
 };
+
+gulp.task('default',['server']);
+
+gulp.task('server', function() {
+  gulp.src('./html/dashboard.html')
+  .pipe(server({
+    livereload: true,
+    open: true,
+    port: 6000
+  }));
+});
 
 gulp.task('compile-scss', function() {
   return gulp.src(Paths.SCSS_TOOLKIT_SOURCES)
