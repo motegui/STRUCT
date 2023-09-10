@@ -1655,7 +1655,7 @@ pre code {
 }
 
 #locales {
-  display: block;
+  display: table;
 }
 
 
