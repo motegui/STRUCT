@@ -110,50 +110,6 @@ demo = {
   
 
   initDashboardPageCharts: function () {
-
-    //data dump from json scrap
-
-    fetch("../assets/demo/info.json")  //agarra la data
-    .then(function(response){
-      return response.json(); //resuelve a json file
-    })
-
-    .then(function(info){   //retorno del json file, un array
-    let placeholder = document.querySelector("#tarjetas-data-ouput");
-
-    let out = "";
-
-    for(let item of info){
-        out += `
-            <tr>
-                <td>${item.bank}</td>
-                <td>${item.card}</td>
-                <td>${item.type}</td>
-            </tr>
-        `;
-    }
-
-    placeholder.innerHTML = out ;   //drop the data in the html
-  })
-
-    var tarjetas = document.getElementById("tarjetas");
-    var locales = document.getElementById("locales");
-
-    $("#0").click(function () {
-      tarjetas.style.display = "none";
-      locales.style.display = "none";
-    })
-
-    $("#1").click(function () {
-      tarjetas.style.display = "none";
-      locales.style.display = "table";
-    })
-
-    $("#2").click(function () {
-      locales.style.display = "none";
-      tarjetas.style.display = "table";
-    });
-
     gradientChartOptionsConfigurationWithTooltipBlue = {
       maintainAspectRatio: false,
       legend: {
