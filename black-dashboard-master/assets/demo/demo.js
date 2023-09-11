@@ -428,7 +428,7 @@ demo = {
     var chart_labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     var chart_data = [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100];
 
-
+    /*
     var ctx = document.getElementById("chartBig1").getContext('2d');
 
     var gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
@@ -479,14 +479,15 @@ demo = {
 
     $("#2").click(function () {
       document.getElementById("tarjetas").style.display = "block";
-      /*
+      
       var chart_data = [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130];
       var data = myChartData.config.data;
       data.datasets[0].data = chart_data;
       data.labels = chart_labels;
       myChartData.update();
-      */
+      
     });
+    */
 
 
     var ctx = document.getElementById("CountryChart").getContext("2d");

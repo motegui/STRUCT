@@ -38,6 +38,8 @@
         "url": "https://github.com/creativetimofficial/black-dashboard/issues"
     },
     "devDependencies": {
+        "@supabase/supabase-js": "^2.33.2",
+        "dotenv": "^16.3.1",
         "gulp": "^4.0.2",
         "gulp-autoprefixer": "^6.1.0",
         "gulp-clean": "^0.4.0",
@@ -47,6 +49,7 @@
         "gulp-sourcemaps": "^2.6.5",
         "gulp-webserver": "^0.1.0",
         "sass": "^1.49.9",
+        "supabase": "^1.93.0",
         "trim-newlines": "3.0.1"
     },
     "homepage": "http://demos.creative-tim.com/black-dashboard/examples/dashboard.html?_ga=2.143239282.69692347.1519629130-329288944.1519374311"
