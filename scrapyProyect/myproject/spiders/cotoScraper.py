@@ -1,6 +1,5 @@
 import scrapy
 import json
-from supabase import create_client
 
 
 '''supabase_url = "https://rkdpcpsryixjcglwqfaa.supabase.co"
