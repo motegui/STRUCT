@@ -18,8 +18,11 @@ class discountBaneSpider(scrapy.spiders.SitemapSpider):
     #'DOWNLOAD_DELAY' :  2.5,
 
     sitemap_urls = ['https://www.santander.com.ar/Sitemap/sitemap.xml',
-                     'https://santander.com.ar/api/sitemap/productos',
-                     'https://www.santander.com.ar/api/sitemap/shopping']
+                    'https://www.bna.com.ar/sitemap.xml']
+
+
+    #'https://santander.com.ar/api/sitemap/productos',
+    #'https://www.santander.com.ar/api/sitemap/shopping']
     #parece que entra a los links del sitemap automaticamente
 
     #atributo que define los url a scrapear
@@ -48,7 +51,6 @@ class discountBaneSpider(scrapy.spiders.SitemapSpider):
         #ATRIUTOS QUE RECIBE LA DATABASE
         #id(int)
         #tarjeta(int)
-        
         #local(int)
         #producto
         #dia_semanal!!!!!
@@ -76,8 +78,6 @@ class discountBaneSpider(scrapy.spiders.SitemapSpider):
 class specificSpider(scrapy.Spider):
     name="specific"
     start_urls = []
-
-
 
 
 #configuracion de console log
