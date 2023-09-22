@@ -5,8 +5,14 @@ from scrapy.utils.log import configure_logging
 import json
 import datetime
 from scrapy import Request
+from supabase import create_client
 
-promos = {}
+
+supabase_url = "https://rkdpcpsryixjcglwqfaa.supabase.co"
+supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZHBjcHNyeWl4amNnbHdxZmFhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NDEwOTg2MCwiZXhwIjoyMDA5Njg1ODYwfQ.oUzvMvpkrEL7FRsQF5x0dWS5gf8f0rqKBNx7O8f8EmY"
+supabase = create_client(supabase_url, supabase_key)
+
+promos = [{}]
 class promoScraper(scrapy.Spider):
 
     name = 'promo'
@@ -259,17 +265,21 @@ class promoScraper(scrapy.Spider):
                 end_date = "None"            
 
             #por ahora todo santander, luego se van a separar segun el banco
-            promos[promocion.xpath('./atom:id/text()', namespaces=namespaces).get()] = {
+            entry = {
                 'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
-                'local' : 0,
+                'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
                 'producto' : promocion.xpath('./atom:title/text()', namespaces=namespaces).get(),
                 'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
                 'beneficio_cuotas' : promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get() or ""+' '
                                     +promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get() or "",
-                'valido_hasta' : "{}".format(end_date),
-                'valido_desde' : "{}".format(start_date),
+                'valido_hasta' : "{}".format(end_date) or None,
+                'valido_desde' : "{}".format(start_date) or None,
                 'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
             }
+            #se guarda cada entry en la lista de entries
+            promos.append(entry)
+            #se mete cada entry en supabase
+            response = supabase.table("DESCUENTO").insert(entry).execute()
         
     
 
