@@ -2,6 +2,7 @@ import {
   Box,
   chakra,
   Container,
+  Spacer,
   Stack,
   Text,
   useColorModeValue,
@@ -37,15 +38,17 @@ export function FooterCh() {
   return (
     <Box
       bg="#F4BBD3"
-      color={useColorModeValue('gray.700', 'gray.200')}>
+      color={useColorModeValue('gray.700', 'gray.200')}
+      >
+        
       <Container
         as={Stack}
-        maxW={'6xl'}
+        maxW={'100%'}
         py={4}
         direction={{ base: 'column', md: 'row' }}
         spacing={4}
-        justify={{ base: 'center', md: 'space-between' }}
-        align={{ base: 'center', md: 'center' }}>
+        justify={{ base: 'space-between', md: 'space-between' }}
+        align={{ base: 'flex-start', md: 'center' }}>
         <Text>© 2022 Chakra Templates. All rights reserved</Text>
         <Stack direction={'row'} spacing={6}>
           <SocialButton label={'Twitter'} href={'#'}>
