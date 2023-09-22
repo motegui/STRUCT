@@ -14,13 +14,13 @@ function Promocard() {
 
   return (
     <Box
-      maxW="md"
       borderWidth="1px"
       borderRadius="md"
       p={4}
       shadow="md"
       bg="#F7F0F3"
       margin={10}
+      flex="1"
     >
       <Text fontSize="2xl" fontWeight="bold">
         25% OFF

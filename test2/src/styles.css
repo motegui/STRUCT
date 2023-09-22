@@ -79,3 +79,16 @@
   .my-text{
     margin-top: 5px;
   }
+
+  .category-col{
+    flex:0;
+    width:300px;
+  }
+
+  .content-col{
+    flex:1;
+  }
+
+  .my-row{
+    display:flex;
+  }
