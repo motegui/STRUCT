@@ -17,8 +17,7 @@ import {
   } from '@chakra-ui/react'
   import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
-import MyIcon from '@mdi/react';
-import { mdiWalletBifold } from '@mdi/js';
+import MyIcon from '@mui/icons-material/Discount';
   
 const NavLink = (props) => {
     const { children } = props;
@@ -46,7 +45,7 @@ const NavLink = (props) => {
       <>
         <Box bg="#F4BBD3" px={4}>
           <Flex h={16} alignItems={'center'} justifyContent={'center'}>
-          <MyIcon path={mdiWalletBifold} size={1} />
+          <MyIcon />
             <Box ml={2} fontWeight="bold" className="my-title-text">Struct</Box>
           </Flex>
         </Box>
