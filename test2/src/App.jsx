@@ -2,6 +2,8 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 
 import "./styles.css"
 import Home from './pages/Home'
+import NoPage from './pages/NoPage'
+
 
 
 export default function App(){
@@ -10,7 +12,7 @@ export default function App(){
       <BrowserRouter>
         <Routes>
           <Route index element={<Home/>}/>
-          
+          <Route path="*" element={<NoPage/>}/>
         </Routes>
       </BrowserRouter>
     </>
