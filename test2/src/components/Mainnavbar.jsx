@@ -15,7 +15,6 @@ import {
     useColorMode,
     Center,
   } from '@chakra-ui/react'
-  import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 
 import MyIcon from '@mui/icons-material/Discount';
   

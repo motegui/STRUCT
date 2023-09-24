@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/icons'
 
 
-export function NavBar() {
+export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure()
 
   return (

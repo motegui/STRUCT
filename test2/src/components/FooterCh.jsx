@@ -34,7 +34,7 @@ const SocialButton = ({children, label, href,}) => {
   )
 }
 
-export function FooterCh() {
+export default function FooterCh() {
   return (
     <Box
       bg="#F4BBD3"
