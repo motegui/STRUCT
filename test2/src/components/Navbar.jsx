@@ -21,7 +21,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons'
-
+import { Link } from 'react-router-dom';
 
 export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure()
@@ -76,11 +76,14 @@ export default function NavBar() {
           spacing={6}
           ml={10}>
             
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+          <Button as={Link}
+            to="../pages/MySignin"
+            fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
             Iniciar Sesión
           </Button>
           <Button
-            as={'a'}
+            as={Link}
+            to="../pages/MySignup"
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
