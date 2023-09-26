@@ -3,6 +3,8 @@ import Categorycard from "../components/Categorycard"
 import Promocard from "../components/Promocard"
 import NavBar from "../components/Navbar"
 import FooterCh from "../components/FooterCh"
+import Cardlist from "../components/Cardlist"
+
 
 export default function Home(){
     return (
@@ -18,6 +20,8 @@ export default function Home(){
                 <div className='content-col'>
                     <Promocard/>
                     <Promocard/>
+                    
+                    <Cardlist/>
                 </div>
             </div>
         </div>
