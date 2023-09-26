@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 import Promocardtest from './Promocardtest';
 
-function Card({ data }) {
-    return (
-        <Promocardtest data={data}/>
-    );
-  }
-
 function Cardlist() {
 
     const [cards, setCards] = useState([]);
@@ -32,7 +26,7 @@ function Cardlist() {
   return (
     <div className="card-list">
       {cards.map((cardData, index) => (
-        <Card key={index} data={cardData} />
+        <Promocardtest key={index} data={cardData} />
       ))}
     </div>
   );

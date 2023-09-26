@@ -8,9 +8,56 @@ import {
   Flex,
 } from '@chakra-ui/react';
 
+function evaluateDiaSemanal({data}) {
+  //const dia_semanal = Array.isArray(data?.dia_semanal) ? data.dia_semanal.join(' ') : data?.dia_semanal || '';
+
+  const dia_semanal = Array.isArray(data?.dia_semanal)
+    ? data.dia_semanal.join(" ")
+    : data?.dia_semanal || "";
+
+  const loweredDiaSemanal = dia_semanal.toLowerCase();
+
+  const specialCases = [
+    { trigger: ["todos los días","lunes"], box: "L" },
+    { trigger: ["todos los días","martes"], box: "Ma" },
+    { trigger: ["todos los días","miercoles", "miércoles"], box: "Mi" },
+    { trigger: ["todos los días","jueves"], box: "J" },
+    { trigger: ["todos los días","viernes"], box: "V" },
+    { trigger: ["todos los días","sabado", "sabados", "sábado", "sábados"], box: "S" },
+    { trigger: ["todos los días","domingo", "domingos"], box: "D" },
+  ];
+
+
+
+const specialBoxes = specialCases.reduce((result, { trigger, box }) => {
+  if (Array.isArray(trigger)) {
+    trigger.forEach((t) => {
+      if (loweredDiaSemanal.includes(t.toLowerCase())) {
+        result.push(box);
+      }
+    });
+  } else {
+    if (loweredDiaSemanal.includes(trigger.toLowerCase())) {
+      result.push(box);
+    }
+  }
+  return result;
+}, []);
+
+if (specialBoxes.length === 0) {
+  return 'not';
+}
+
+  return specialBoxes;
+}
+
 function Promocardtest({data}) {
 
-  const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local } = data;
+  const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;
+
+  const specialBoxes = evaluateDiaSemanal({data});
+
+  const notABox = (specialBoxes==='not');
 
   return (
     <Box
@@ -52,8 +99,13 @@ function Promocardtest({data}) {
         <Text size="sm">{valido_hasta}</Text>
       </HStack>
 
-      <Flex className="days-available" justifyContent={"right"}>
-        <Box bg="#F7F0F3" 
+      {notABox ? (
+        <HStack justifyContent={"right"}>
+          <Text size="sm" >{dia_semanal}</Text>
+        </HStack>
+      ):(
+        <Flex className="days-available" justifyContent={"right"}>
+        <Box bg={specialBoxes.includes("L") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -62,7 +114,7 @@ function Promocardtest({data}) {
         display="flex"
         justifyContent="center"
         alignItems="center">L</Box>
-        <Box bg="#F7F0F3" 
+        <Box bg={specialBoxes.includes("Ma") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -71,7 +123,7 @@ function Promocardtest({data}) {
         display="flex"
         justifyContent="center"
         alignItems="center">Ma</Box>
-        <Box bg="#CCCCCC" 
+        <Box bg={specialBoxes.includes("Mi") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -80,7 +132,7 @@ function Promocardtest({data}) {
         display="flex"
         justifyContent="center"
         alignItems="center">Mi</Box>
-        <Box bg="#CCCCCC" 
+        <Box bg={specialBoxes.includes("J") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -89,7 +141,7 @@ function Promocardtest({data}) {
         display="flex"
         justifyContent="center"
         alignItems="center">J</Box>
-        <Box bg="#F7F0F3" 
+        <Box bg={specialBoxes.includes("V") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -98,7 +150,7 @@ function Promocardtest({data}) {
         display="flex"
         justifyContent="center"
         alignItems="center">V</Box>
-        <Box bg="#F7F0F3" 
+        <Box bg={specialBoxes.includes("S") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -107,7 +159,7 @@ function Promocardtest({data}) {
         display="flex"
         justifyContent="center"
         alignItems="center">S</Box>
-        <Box bg="#F7F0F3" 
+        <Box bg={specialBoxes.includes("D") ? "#CCCCCC" : "#F7F0F3"} 
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
         width="25px" 
@@ -117,6 +169,7 @@ function Promocardtest({data}) {
         justifyContent="center"
         alignItems="center">D</Box>
       </Flex>
+      )}
     </Box>
   );
 }
