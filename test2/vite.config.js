@@ -6,8 +6,5 @@ export default defineConfig({
   plugins: [react()],
   build:{
        target: "esnext",
-       rollupOptions: {
-         external: [ "@supabase/supabase-js" ],
-       },
    },
 })
