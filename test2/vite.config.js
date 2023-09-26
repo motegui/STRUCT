@@ -10,9 +10,4 @@ export default defineConfig({
          external: [ "@supabase/supabase-js" ],
        },
    },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-  },
 })
