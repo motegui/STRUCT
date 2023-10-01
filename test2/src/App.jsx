@@ -1,36 +1,23 @@
-import {
-  VStack,
-  HStack,
-  Flex,
-  Spacer,
-} from '@chakra-ui/react';
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 
-import { NavBar } from "./Navbar"
-import { FooterCh } from "./FooterCh"
 import "./styles.css"
-import Mainnavbar from "./Mainnavbar"
-import Categorycard from "./Categorycard"
-import Promocard from "./Promocard"
+import Home from './pages/Home'
+import NoPage from './pages/NoPage'
+import MySignup from './pages/MySignup'
+import MySignin from './pages/MySignin'
+
 
 export default function App(){
   return (
     <>
-      <div className="body">
-      <Mainnavbar/>
-    <NavBar />
-    <div className="main">
-      <div className='my-row'>
-        <div className='category-col'>
-        <Categorycard/>
-        </div>
-        <div className='content-col'>
-        <Promocard/>
-        <Promocard/>
-        </div>
-      </div>
-    </div>
-    <FooterCh />
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Home/>}/>
+          <Route path="/pages/MySignup" element={<MySignup/>} />
+          <Route path="/pages/MySignin" element={<MySignin/>} />
+          <Route path="*" element={<NoPage/>}/>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

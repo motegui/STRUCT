@@ -85,7 +85,7 @@ export default function Signup() {
             </Stack>
             <Stack pt={6}>
               <Text align={'center'}>
-                Ya tiene cuenta? <Link color={'pink.300'}>Iniciar Sesión</Link>
+                Ya tiene cuenta? <Link href="../pages/MySignin" color={'pink.300'}>Iniciar Sesión</Link>
               </Text>
             </Stack>
           </Stack>

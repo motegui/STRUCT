@@ -21,9 +21,9 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from '@chakra-ui/icons'
+import { Link } from 'react-router-dom';
 
-
-export function NavBar() {
+export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure()
 
   return (
@@ -76,11 +76,14 @@ export function NavBar() {
           spacing={6}
           ml={10}>
             
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+          <Button as={Link}
+            to="../pages/MySignin"
+            fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
             Iniciar Sesión
           </Button>
           <Button
-            as={'a'}
+            as={Link}
+            to="../pages/MySignup"
             display={{ base: 'none', md: 'inline-flex' }}
             fontSize={'sm'}
             fontWeight={600}
@@ -246,7 +249,7 @@ const MobileNavItem = ({ label, children, href }) => {
 
 const NAV_ITEMS = [
     {
-      label: 'Inspiration',
+      label: 'Tarjetas',
       children: [
         {
           label: 'Explore Design Work',
@@ -261,7 +264,7 @@ const NAV_ITEMS = [
       ],
     },
     {
-      label: 'Find Work',
+      label: 'Locales',
       children: [
         {
           label: 'Job Board',
@@ -276,11 +279,7 @@ const NAV_ITEMS = [
       ],
     },
     {
-      label: 'Learn Design',
-      href: '#',
-    },
-    {
-      label: 'Hire Designers',
+      label: 'Contacto',
       href: '#',
     },
   ];
