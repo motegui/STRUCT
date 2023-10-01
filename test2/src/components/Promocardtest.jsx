@@ -9,8 +9,6 @@ import {
 } from '@chakra-ui/react';
 
 function evaluateDiaSemanal({data}) {
-  //const dia_semanal = Array.isArray(data?.dia_semanal) ? data.dia_semanal.join(' ') : data?.dia_semanal || '';
-
   const dia_semanal = Array.isArray(data?.dia_semanal)
     ? data.dia_semanal.join(" ")
     : data?.dia_semanal || "";
@@ -51,7 +49,53 @@ if (specialBoxes.length === 0) {
   return specialBoxes;
 }
 
-function Promocardtest({data}) {
+function doesSearchMatch({data}, searchValue) {
+  const loweredSearchValue = searchValue.toLowerCase();
+
+  const dia_semanal = Array.isArray(data?.dia_semanal)
+    ? data.dia_semanal.join(" ")
+    : data?.dia_semanal || "";
+
+  const beneficio_cuotas = Array.isArray(data?.beneficio_cuotas)
+    ? data.beneficio_cuotas.join(" ")
+    : data?.beneficio_cuotas || "";
+
+    const descripcion_descuento = Array.isArray(data?.descripcion_descuento)
+    ? data.descripcion_descuento.join(" ")
+    : data?.descripcion_descuento || "";
+
+    const tarjeta = Array.isArray(data?.tarjeta)
+    ? data.tarjeta.join(" ")
+    : data?.tarjeta || "";
+
+    const producto = Array.isArray(data?.producto)
+    ? data.producto.join(" ")
+    : data?.producto || "";
+
+    const valido_hasta = Array.isArray(data?.valido_hasta)
+    ? data.valido_hasta.join(" ")
+    : data?.valido_hasta || "";
+
+    const local = Array.isArray(data?.local)
+    ? data.local.join(" ")
+    : data?.local || "";
+
+  if (
+    beneficio_cuotas.toLowerCase().includes(loweredSearchValue) ||
+    descripcion_descuento.toLowerCase().includes(loweredSearchValue) ||
+    tarjeta.toLowerCase().includes(loweredSearchValue) ||
+    producto.toLowerCase().includes(loweredSearchValue) ||
+    valido_hasta.toLowerCase().includes(loweredSearchValue) ||
+    local.toLowerCase().includes(loweredSearchValue) ||
+    dia_semanal.toLowerCase().includes(loweredSearchValue)
+  ) {
+    return true; // Match found
+  }
+
+  return false; // No match found
+}
+
+function Promocardtest({data,searchValue}) {
 
   const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;
 
@@ -59,6 +103,10 @@ function Promocardtest({data}) {
 
   const notABox = (specialBoxes==='not');
 
+  const isSearchMatch = doesSearchMatch({data}, searchValue);
+
+  if(!isSearchMatch) return <></>;
+  else
   return (
     <Box
       borderWidth="1px"
