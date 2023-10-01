@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { createTheme } from '@mui/material';
 import Box from '@mui/material/Box'
 import './App.css';
 import Navbar from './components/navbar/Navbar';
 import Dashboard from './components/dashboard/Dashboard';
-import Locales from './components/tables/Locales';
-import Pago from './components/tables/Pago';
+import LocalesTable from './components/tables/LocalesTable';
 const App = () => {
   const [count, setCount] = useState(0); 
 
@@ -12,7 +12,7 @@ const App = () => {
     <>
       <Box sx={{ display: 'flex' }}>
         <Navbar />
-        <Dashboard content={<><Locales /> <Pago /></>}/>
+        <Dashboard content={<><LocalesTable/></>}/>
       </Box>
       
     </>
