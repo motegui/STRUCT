@@ -281,7 +281,7 @@ class promoScraper(scrapy.Spider):
             #se mete cada entry en supabase
             response = supabase.table("DESCUENTO").insert(entry).execute()
         
-    
+   
 
     #def close(self, reason):
 
