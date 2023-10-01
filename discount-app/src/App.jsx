@@ -5,6 +5,7 @@ import './App.css';
 import Navbar from './components/navbar/Navbar';
 import Dashboard from './components/dashboard/Dashboard';
 import LocalesTable from './components/tables/LocalesTable';
+import DescuentosTable from './components/tables/DescuentosTable';
 const App = () => {
   const [count, setCount] = useState(0); 
 
@@ -12,7 +13,7 @@ const App = () => {
     <>
       <Box sx={{ display: 'flex' }}>
         <Navbar />
-        <Dashboard content={<><LocalesTable/></>}/>
+        <Dashboard />
       </Box>
       
     </>
