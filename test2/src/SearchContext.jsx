@@ -6,7 +6,15 @@ const SearchContext = createContext();
 // Create a context provider component
 export function SearchProvider({ children }) {
   const [searchValue, setSearchValue] = useState('');
-  const [checkedCategories, setCheckedCategories] = useState({});
+  const [checkedCategories, setCheckedCategories] = useState({
+    Lunes: false,
+    Martes: false,
+    Miércoles: false,
+    Jueves: false,
+    Viernes: false,
+    Sabado: false,
+    Domingo: false,
+  });
 
   const updateCheckedCategories = (newCheckedCategories) => {
     setCheckedCategories(newCheckedCategories);

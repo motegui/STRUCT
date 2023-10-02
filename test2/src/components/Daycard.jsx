@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Link, Text, VStack ,Flex, Checkbox, Spacer, HStack} from '@chakra-ui/react';
-import { useSearch } from './SearchContext';
+import { useSearch } from '../SearchContext';
 
 const categories = [
   { name: 'Lunes',},
@@ -13,23 +13,17 @@ const categories = [
 ];
 
 function Daycard() {
-
-    const [checkedCategories, setCheckedCategories] = useState({
-      Lunes: true,
-      Martes: true,
-      Miércoles: true,
-      Jueves: true,
-      Viernes: true,
-      Sabado: true,
-      Domingo: true,
-    });
+    const { checkedCategories, updateCheckedCategories } = useSearch();
 
     const handleCheckboxChange = (categoryName) => {
-        setCheckedCategories((prevCheckedCategories) => ({
-          ...prevCheckedCategories,
-          [categoryName]: !prevCheckedCategories[categoryName],
-        }));
-      };
+    const updatedCategories = {
+      ...checkedCategories,
+      [categoryName]: !checkedCategories[categoryName],
+    };
+
+    // Update the context state with the new checkbox values
+    updateCheckedCategories(updatedCategories);
+  };
 
   return (
     <Box

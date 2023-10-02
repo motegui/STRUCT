@@ -95,11 +95,19 @@ function doesSearchMatch({data}, searchValue) {
   return false; // No match found
 }
 
-function doesDayMatch({data}){
-  
+function doesDayFilter({checkedDays},specialBoxes){
+  var toRet=1;
+  if(checkedDays.Lunes) toRet*=specialBoxes.includes("L");
+  if(checkedDays.Martes) toRet*= specialBoxes.includes("Ma");
+  if(checkedDays.Miércoles) toRet*= specialBoxes.includes("Mi");
+  if(checkedDays.Jueves) toRet*= specialBoxes.includes("J");
+  if(checkedDays.Viernes) toRet*= specialBoxes.includes("V");
+  if(checkedDays.Sabado) toRet*= specialBoxes.includes("S");
+  if(checkedDays.Domingo) toRet*= specialBoxes.includes("D");
+  return toRet==1;
 }
 
-function Promocardtest({data,searchValue}) {
+function Promocardtest({data,searchValue,checkedDays}) {
 
   const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;
 
@@ -109,7 +117,10 @@ function Promocardtest({data,searchValue}) {
 
   const isSearchMatch = doesSearchMatch({data}, searchValue);
 
-  if(!isSearchMatch) return <></>;
+  const isDayFiltered = doesDayFilter({checkedDays},specialBoxes);
+
+
+  if(!isSearchMatch || !isDayFiltered) return <></>;
   else
   return (
     <Box
