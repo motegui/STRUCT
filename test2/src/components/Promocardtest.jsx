@@ -95,6 +95,10 @@ function doesSearchMatch({data}, searchValue) {
   return false; // No match found
 }
 
+function doesDayMatch({data}){
+  
+}
+
 function Promocardtest({data,searchValue}) {
 
   const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;

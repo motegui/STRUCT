@@ -65,7 +65,7 @@ export default function NavBar() {
         <Box>
         <Input
           type="text"
-          placeholder="Search"
+          placeholder="Buscar"
           size="sm"
           variant="outline"
           borderColor="#CCCCCC"   // Set the border color

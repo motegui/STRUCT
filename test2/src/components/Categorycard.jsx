@@ -32,9 +32,6 @@ function Categorycard() {
       margin="10"
       maxWidth="200px"
     >
-      {/*}<Text fontSize="lg" fontWeight="bold" mb={4}>
-        Categories
-  </Text>{*/}
       <VStack align="start" spacing={2}>
         {categories.map((category) => (
           <Flex key={category.name} alignItems="center">
