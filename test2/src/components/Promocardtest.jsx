@@ -14,7 +14,6 @@ import React, { useState } from 'react';
 import Icon from '@mdi/react';
 import { mdiStar } from '@mdi/js';
 import { mdiStarOutline } from '@mdi/js';
-import { FaPiggyBank } from 'react-icons/fa';
 
 function evaluateDiaSemanal({data}) {
   const dia_semanal = Array.isArray(data?.dia_semanal)
@@ -115,7 +114,11 @@ function doesDayFilter({checkedDays},specialBoxes){
   return toRet==1;
 }
 
-function Promocardtest({data,searchValue,checkedDays}) {
+function favsCheck(favsOnly,isFavourite){
+  return !favsOnly || (favsOnly && isFavourite);
+}
+
+function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
 
   const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;
 
@@ -127,14 +130,19 @@ function Promocardtest({data,searchValue,checkedDays}) {
 
   const isDayFiltered = doesDayFilter({checkedDays},specialBoxes);
 
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+  const toggleFavourite = () => {
+    setIsFavourite(!isFavourite);
   };
 
+  const databaseDate = new Date(valido_hasta);
+  const currentDate = new Date();
+  const isDatePriorToCurrent = databaseDate < currentDate;
+  const isFavs = favsCheck(favsOnly,isFavourite);
 
-  if(!isSearchMatch || !isDayFiltered) return <></>;
+
+  if(!isSearchMatch || !isDayFiltered || (!isFavs)) return <></>;
   else
   return (
     <Box
@@ -142,7 +150,7 @@ function Promocardtest({data,searchValue,checkedDays}) {
       borderRadius="md"
       p={4}
       shadow="md"
-      bg="#F7F0F3"
+      bg={isDatePriorToCurrent ? "#E3E1E3":"#F7F0F3"}
       margin={10}
       flex="1"
     >
@@ -151,7 +159,7 @@ function Promocardtest({data,searchValue,checkedDays}) {
         {beneficio_cuotas}
       </Text>
       <Spacer />
-      <Button onClick={toggleFavorite} _hover={{ bg: 'pink.100'}}><Icon path={isFavorite? mdiStar:mdiStarOutline} size={1}/></Button>
+      <Button onClick={toggleFavourite} _hover={{ bg: 'pink.100'}} bg={isDatePriorToCurrent ? "#E3E1E3":"#F7F0F3"} id="fav"><Icon path={isFavourite? mdiStar:mdiStarOutline} size={1}/></Button>
       </Flex>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
@@ -177,7 +185,7 @@ function Promocardtest({data,searchValue,checkedDays}) {
 
       <HStack mt={4} spacing={2}>
         <Text fontSize="sm">Valido hasta:</Text>
-        <Text size="sm">{valido_hasta}</Text>
+        <Text size="sm" color={isDatePriorToCurrent ? "red":""}>{valido_hasta}</Text>
       </HStack>
 
       {notABox ? (

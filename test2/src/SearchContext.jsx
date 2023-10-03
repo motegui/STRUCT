@@ -15,13 +15,18 @@ export function SearchProvider({ children }) {
     Sabado: false,
     Domingo: false,
   });
+  const [showOnlyFavourites, setShowOnlyFavourites] = useState(false);
 
   const updateCheckedCategories = (newCheckedCategories) => {
     setCheckedCategories(newCheckedCategories);
   };
 
+  const updateShowOnlyFavourites = (value) => { // Function to update showOnlyFavourites
+    setShowOnlyFavourites(value);
+  };
+
   return (
-    <SearchContext.Provider value={{ searchValue, setSearchValue, checkedCategories, updateCheckedCategories }}>
+    <SearchContext.Provider value={{ searchValue, setSearchValue, checkedCategories, updateCheckedCategories, showOnlyFavourites, updateShowOnlyFavourites}}>
       {children}
     </SearchContext.Provider>
   );

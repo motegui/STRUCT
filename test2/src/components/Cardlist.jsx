@@ -8,6 +8,7 @@ function Cardlist() {
     const [cards, setCards] = useState([]);
     const { searchValue } = useSearch();
     const { checkedCategories } = useSearch();
+    const { showOnlyFavourites } = useSearch();
 
 
     useEffect(() => {
@@ -31,7 +32,7 @@ function Cardlist() {
     <div className="card-list">
       <h1>{searchValue}</h1>
       {cards.map((cardData, index) => (
-        <Promocardtest key={index} data={cardData} searchValue={searchValue} checkedDays={checkedCategories}/>
+        <Promocardtest key={index} data={cardData} searchValue={searchValue} checkedDays={checkedCategories} favsOnly={showOnlyFavourites}/>
       ))}
     </div>
   );
