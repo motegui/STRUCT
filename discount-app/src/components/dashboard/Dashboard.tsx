@@ -51,7 +51,6 @@ const Dashboard = (props) => {
               Main Dashboard
             </Link>
           </Breadcrumbs>
-          {props.breadcrumbs}
         </div>
         <ButtonGroup variant="outlined" aria-label="outlined button group">
           {allTables.map((table, index) => (
