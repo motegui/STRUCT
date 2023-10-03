@@ -6,7 +6,15 @@ import {
   VStack,
   HStack,
   Flex,
+  Spacer,
+  Button,
 } from '@chakra-ui/react';
+
+import React, { useState } from 'react';
+import Icon from '@mdi/react';
+import { mdiStar } from '@mdi/js';
+import { mdiStarOutline } from '@mdi/js';
+import { FaPiggyBank } from 'react-icons/fa';
 
 function evaluateDiaSemanal({data}) {
   const dia_semanal = Array.isArray(data?.dia_semanal)
@@ -119,6 +127,12 @@ function Promocardtest({data,searchValue,checkedDays}) {
 
   const isDayFiltered = doesDayFilter({checkedDays},specialBoxes);
 
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
+
 
   if(!isSearchMatch || !isDayFiltered) return <></>;
   else
@@ -132,10 +146,14 @@ function Promocardtest({data,searchValue,checkedDays}) {
       margin={10}
       flex="1"
     >
-      <Text fontSize="2xl" fontWeight="bold">
+      <Flex>
+        <Text fontSize="2xl" fontWeight="bold">
         {beneficio_cuotas}
       </Text>
-
+      <Spacer />
+      <Button onClick={toggleFavorite} _hover={{ bg: 'pink.100'}}><Icon path={isFavorite? mdiStar:mdiStarOutline} size={1}/></Button>
+      </Flex>
+      
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
 
       <Text fontSize="md">

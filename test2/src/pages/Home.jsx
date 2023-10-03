@@ -26,9 +26,6 @@ export default function Home(){
             </div>
                 <div className='content-col'>
                     <MySearchMessage text={searchValue}/>
-                    <Promocard/>
-                    <Promocard/>
-                    
                     <Cardlist/>
                 </div>
             </div>
