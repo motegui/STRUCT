@@ -1,5 +1,7 @@
 import React from 'react';
-import { Box, Link, Text, VStack ,Flex} from '@chakra-ui/react';
+import { Box, Link, Text, VStack ,Flex, Checkbox} from '@chakra-ui/react';
+import { useSearch } from '../SearchContext';
+
 
 import Icon from '@mdi/react';
 import { mdiSilverwareForkKnife } from '@mdi/js';
@@ -22,6 +24,8 @@ const categories = [
 ];
 
 function Categorycard() {
+  const { showOnlyFavourites, updateShowOnlyFavourites } = useSearch();
+
   return (
     <Box
       width="250px"
@@ -32,9 +36,6 @@ function Categorycard() {
       margin="10"
       maxWidth="200px"
     >
-      {/*}<Text fontSize="lg" fontWeight="bold" mb={4}>
-        Categories
-  </Text>{*/}
       <VStack align="start" spacing={2}>
         {categories.map((category) => (
           <Flex key={category.name} alignItems="center">
@@ -44,6 +45,15 @@ function Categorycard() {
             </Link>
           </Flex>
         ))}
+        <Text>favsOnly</Text>
+        <Checkbox 
+                    size="md"
+                    colorScheme="gray"
+                    border="#CCCCCC"
+                    mr={2}
+                    isChecked={showOnlyFavourites}
+                    onChange={() => updateShowOnlyFavourites(!showOnlyFavourites)}
+                    />
       </VStack>
     </Box>
   );

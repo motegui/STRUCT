@@ -5,11 +5,13 @@ import Home from './pages/Home'
 import NoPage from './pages/NoPage'
 import MySignup from './pages/MySignup'
 import MySignin from './pages/MySignin'
+import { SearchProvider } from './SearchContext'
 
 
 export default function App(){
   return (
     <>
+    <SearchProvider>
       <BrowserRouter>
         <Routes>
           <Route index element={<Home/>}/>
@@ -18,6 +20,7 @@ export default function App(){
           <Route path="*" element={<NoPage/>}/>
         </Routes>
       </BrowserRouter>
+    </SearchProvider>
     </>
   )
 }

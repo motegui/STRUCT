@@ -23,8 +23,15 @@ import {
 } from '@chakra-ui/icons'
 import { Link } from 'react-router-dom';
 
+import { useSearch } from '../SearchContext';
+
 export default function NavBar() {
-  const { isOpen, onToggle } = useDisclosure()
+  const { isOpen, onToggle } = useDisclosure();
+  const { searchValue, setSearchValue } = useSearch();
+
+  const handleInputChange = (event) => {
+    setSearchValue(event.target.value); // Update the search value in the context
+  };
 
   return (
     <Box alignItems={'center'} justifyContent={'center'}>
@@ -58,7 +65,7 @@ export default function NavBar() {
         <Box>
         <Input
           type="text"
-          placeholder="Search"
+          placeholder="Buscar"
           size="sm"
           variant="outline"
           borderColor="#CCCCCC"   // Set the border color
@@ -66,6 +73,8 @@ export default function NavBar() {
           borderRadius="full"
           p={2}
           mr={50}
+          value={searchValue}
+          onChange={handleInputChange}
         />
         </Box>
 
