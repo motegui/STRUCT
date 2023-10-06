@@ -10,6 +10,7 @@ import datetime
 from scrapy import Request
 from supabase import create_client
 from selenium.webdriver.chrome.options import Options
+import logging
 
 #set headless
 #chrome_options = Options()
@@ -20,6 +21,9 @@ options = {
 # Create a new instance of the Firefox driver
 driver = webdriver.Chrome(seleniumwire_options=options)
 
+#configuracion de consola
+logger = logging.getLogger('selenium.webdriver.remote.remote_connection')
+logger.setLevel(logging.WARNING)
 
 #supabase_url = "https://rkdpcpsryixjcglwqfaa.supabase.co"
 #supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZHBjcHNyeWl4amNnbHdxZmFhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NDEwOTg2MCwiZXhwIjoyMDA5Njg1ODYwfQ.oUzvMvpkrEL7FRsQF5x0dWS5gf8f0rqKBNx7O8f8EmY"
@@ -36,11 +40,6 @@ class testScraper(scrapy.Spider):
     #meter esta opcion en settings para evitar baneos
     #'DOWNLOAD_DELAY' :  2.5,
 
-    #contador de paginacion
-    pag = 1
-    
-
-    
     #retorna iterable de Requests, o un generador con yield
     def start_requests(self):
         urls = ['https://www.santander.com.ar/banco/online/personas/beneficios/compras']
@@ -51,27 +50,64 @@ class testScraper(scrapy.Spider):
     #response: "texto" con el contenido de la pagina
     def parse(self, response):
         curl_commands = []
-        print("THE URL: "+ response.url)
         url_to_get = response.url
 
         # Navigate to a website
         driver.get(url_to_get)
 
         # Get the requests made by the browser
-        '''selenium_requests = driver.requests
+        selenium_requests = driver.requests
         for selenium_request in selenium_requests:
-            if selenium_request.response and selenium_request.method=='GET':    #solo guardo las get request
-                curl_commands.append(curlify.to_curl(selenium_request))'''
-        #header de request para pagina 1
-        
+            if selenium_request.response and selenium_request.method=='GET' and 'contenthandler' in selenium_request.url:    #solo guardo las get request
+                print("##### GET REQUEST CAUGHT #####")
+                print(selenium_request)
+                curl_commands.append(curlify.to_curl(selenium_request))
+ 
+
         #realiza requests de 1 a 11
         for curl_command in curl_commands: 
             request = Request.from_curl(curl_command=curl_command, callback=self.handle_content)
-            yield request  
+            yield request
 
+    def handle_content(self, response):
+        if response.text:
+            namespaces = {
+            'atom': 'http://www.w3.org/2005/Atom',
+            'wplc': 'http://www.ibm.com/wplc/atom/1.0'  # Replace with the actual WPLC namespace URI
+            }
+
+            promociones = response.xpath('//atom:entry', namespaces=namespaces)
+            for promocion in promociones:
+                #la fecha esta en millis, la paso a utc
+                
+                start_timestamp = promocion.xpath('./wplc:field[@id="publishdate"]/text()', namespaces=namespaces).get()
+                if(start_timestamp!=None):
+                    start_date = datetime.datetime.utcfromtimestamp(int(start_timestamp)/1000)
+                else:
+                    start_date = "None"
+                end_timestamp = promocion.xpath('./wplc:field[@id="expirationdate"]/text()', namespaces=namespaces).get()
+                if(end_timestamp!=None):
+                    end_date = datetime.datetime.utcfromtimestamp(int(end_timestamp)/1000)
+                else:
+                    end_date = "None"            
+
+                #por ahora todo santander, luego se van a separar segun el banco
+                entry = {
+                    'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
+                    'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                    'producto' : promocion.xpath('./atom:title/text()', namespaces=namespaces).get(),
+                    'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
+                    'beneficio_cuotas' : promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get() or ""+' '
+                                        +promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get() or "",
+                    'valido_hasta' : "{}".format(end_date) or None,
+                    'valido_desde' : "{}".format(start_date) or None,
+                    'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
+                }
+                #se guarda cada entry en la lista de entries
+                promos.append(entry)
 
 #configuracion de console log
-configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
+#configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
 
 #instancia para correr spiders dentro del script
 runner = CrawlerRunner()
@@ -81,6 +117,7 @@ d = runner.crawl(testScraper)
 d.addBoth(lambda _: reactor.stop())
 reactor.run()  # the script will block here until the crawling is finished
 
+print(promos)
 #inserta resultados en un archivo JSON
 file_path = "dict.json"
 with open(file_path, "w", encoding="utf-8") as json_file:
