@@ -13,9 +13,6 @@ correct_ans = ["The world as we have created it is a process of our thinking. It
 retrieved_ans = []
 
 
-
-
-
 class APISpider(scrapy.Spider):
     name = "api"
 
@@ -23,52 +20,48 @@ class APISpider(scrapy.Spider):
         urls = [
             "https://quotes.toscrape.com/page/1/",
             "https://quotes.toscrape.com/peichNamberTu",
-            
-        ]
-        '''"http://www.httpbin.org/",  # HTTP 200 expected
+            "http://www.httpbin.org/",  # HTTP 200 expected
             "http://www.httpbin.org/status/404",  # Not found error
             "http://www.httpbin.org/status/500",  # server issue
             "http://www.httpbin.org:12345/",  # non-responding host, timeout expected
-            "https://example.invalid/",  # DNS error expected'''
+            "https://example.invalid/",  # DNS error expected            
+        ]
+        
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse, errback=self.errback_handler)
 
     def parse(self, response):
         error_code_testing(response)
         textEntries = response.xpath('//span[@itemprop="text"]/text()').get()
-        retrieved_ans.append(textEntries[1:-1])     #quito el primer y ultimo caracter porque son de estilo
+        retrieved_ans.append(textEntries[1:-1] if textEntries != None else "")     #quito el primer y ultimo caracter porque son de estilo
 
     def errback_handler(self, failure):
         # log all failures
-        #self.logger.error(repr(failure))
         print(repr(failure))
-        #print(dir(failure.value))
-
         # in case you want to do something special for some errors,
         # you may need the failure's type:
-
+        response = failure.value.response
         if failure.check(HttpError):
-            response = failure.value.response
             print(f'Error: {HttpError}')
-            failure.printDetailedTraceback
             print(f'Value: {repr(failure.value)}')
             print(f'Status: {response.status}')
-            failure.printTraceback()
-
-            #self.logger.error("HttpError on %s", response.url)
             print(f"HttpError on {response.url}")
 
         elif failure.check(DNSLookupError):
-            print(DNSLookupError)
-            # this is the original request
-            request = failure.request
-            #self.logger.error("DNSLookupError on %s", request.url)
-            print("DNSLookupError on {request.url}")
+
+            print(f'Error: {DNSLookupError}')
+            print(f'Value: {repr(failure.value)}')
+            print(f'Status: {response.status}')
+            print(f"DNSError on {response.url}")
 
         elif failure.check(TimeoutError, TCPTimedOutError):
             request = failure.request
             #self.logger.error("TimeoutError on %s", request.url)
             print("TimeoutError on {request.url}")
+            print(f'Error: {DNSLookupError}')
+            print(f'Value: {repr(failure.value)}')
+            print(f'Status: {response.status}')
+            print(f"DNSError on {response.url}")
 
 
 
