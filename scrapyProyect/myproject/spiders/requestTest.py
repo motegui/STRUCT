@@ -70,41 +70,56 @@ class testScraper(scrapy.Spider):
             yield request
 
     def handle_content(self, response):
-        if response.text:
-            namespaces = {
-            'atom': 'http://www.w3.org/2005/Atom',
-            'wplc': 'http://www.ibm.com/wplc/atom/1.0'  # Replace with the actual WPLC namespace URI
-            }
+        namespaces = {
+        'atom': 'http://www.w3.org/2005/Atom',
+        'wplc': 'http://www.ibm.com/wplc/atom/1.0'  # Replace with the actual WPLC namespace URI
+        }
 
+        #algunas get requests son de CSS y no de XML con info util, esos los skippeamos
+        try:
             promociones = response.xpath('//atom:entry', namespaces=namespaces)
-            for promocion in promociones:
-                #la fecha esta en millis, la paso a utc
-                
-                start_timestamp = promocion.xpath('./wplc:field[@id="publishdate"]/text()', namespaces=namespaces).get()
-                if(start_timestamp!=None):
-                    start_date = datetime.datetime.utcfromtimestamp(int(start_timestamp)/1000)
-                else:
-                    start_date = "None"
-                end_timestamp = promocion.xpath('./wplc:field[@id="expirationdate"]/text()', namespaces=namespaces).get()
-                if(end_timestamp!=None):
-                    end_date = datetime.datetime.utcfromtimestamp(int(end_timestamp)/1000)
-                else:
-                    end_date = "None"            
+        except scrapy.exceptions.NotSupported:
+            return
+        for promocion in promociones:
+            title = promocion.xpath('./atom:title/text()', namespaces=namespaces).get()
+            if title == None:
+                pass
 
-                #por ahora todo santander, luego se van a separar segun el banco
-                entry = {
-                    'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
-                    'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
-                    'producto' : promocion.xpath('./atom:title/text()', namespaces=namespaces).get(),
-                    'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
-                    'beneficio_cuotas' : promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get() or ""+' '
-                                        +promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get() or "",
-                    'valido_hasta' : "{}".format(end_date) or None,
-                    'valido_desde' : "{}".format(start_date) or None,
-                    'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
-                }
-                #se guarda cada entry en la lista de entries
-                promos.append(entry)
+
+            #la fecha esta en millis, la paso a utc
+            
+            start_timestamp = promocion.xpath('./wplc:field[@id="publishdate"]/text()', namespaces=namespaces).get()
+            if(start_timestamp!=None):
+                start_date = datetime.datetime.utcfromtimestamp(int(start_timestamp)/1000)
+            else:
+                start_date = "None"
+            end_timestamp = promocion.xpath('./wplc:field[@id="expirationdate"]/text()', namespaces=namespaces).get()
+            if(end_timestamp!=None):
+                end_date = datetime.datetime.utcfromtimestamp(int(end_timestamp)/1000)
+            else:
+                end_date = "None"            
+
+            #elementos que se encuentran separados en el backend 
+            #pero deben mostrarse concatenados
+            beneficio1 = promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get()
+            if beneficio1 == None:
+                beneficio1 = ""
+            beneficio2 = promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get()
+            if beneficio2 == None:
+                beneficio2=""
+            #por ahora todo santander, luego se van a separar segun el banco
+            entry = {
+                'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
+                'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                'producto' : title,
+                'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
+                'beneficio_cuotas' : beneficio1 + ' ' + beneficio2,
+                'valido_hasta' : "{}".format(end_date) or None,
+                'valido_desde' : "{}".format(start_date) or None,
+                'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
+            }
+            #se guarda cada entry en la lista de entries
+            promos.append(entry)
 
 #configuracion de console log
 #configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
