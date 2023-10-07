@@ -58,13 +58,17 @@ class testScraper(scrapy.Spider):
         # Get the requests made by the browser
         selenium_requests = driver.requests
         for selenium_request in selenium_requests:
-            if selenium_request.response and selenium_request.method=='GET' and 'contenthandler' in selenium_request.url:    #solo guardo las get request
+            if selenium_request.response and selenium_request.method=='GET' and 'contenthandler' in selenium_request.url and not 'scopes' in selenium_request.url:    
+                #solo se guardan las get request
+                #unicamente se parsean las url que contienen "contenthandler" pero no "scopes"
+                
+                
                 print("##### GET REQUEST CAUGHT #####")
                 print(selenium_request)
                 curl_commands.append(curlify.to_curl(selenium_request))
  
 
-        #realiza requests de 1 a 11
+        #le pasa cada request al metodo handle
         for curl_command in curl_commands: 
             request = Request.from_curl(curl_command=curl_command, callback=self.handle_content)
             yield request
@@ -135,5 +139,11 @@ reactor.run()  # the script will block here until the crawling is finished
 print(promos)
 #inserta resultados en un archivo JSON
 file_path = "dict.json"
+mydict = {{}}
+count = 1
+for prom in promos:
+    mydict[count] = prom
+    count+=1
+print(mydict)
 with open(file_path, "w", encoding="utf-8") as json_file:
     json.dump(promos, json_file, ensure_ascii=False)

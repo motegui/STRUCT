@@ -9,32 +9,12 @@ table_name = "DATA"
 '''
 data = {}
 class CotoScraperSpider(scrapy.Spider):
-    name = "cotoScraper2"
-    start_urls = ['https://www.cotodigital3.com.ar/sitios/cdigi/browse/ofertas-todas-las-ofertas/_/N-c7ha3p']
+    name = "ejemplardo"
+    start_urls = ['https://www.santander.com.ar/banco/online/personas/beneficios/compras?pagina=1']
     def parse(self, response):
-        elements = response.xpath('//ul[@id="products"]')
-        products = elements.xpath('.//li')
-        for product in products:
-            key = product.xpath('.//div[@class="descrip_full"]/text()').get()
-            if key != None:
+        
+        next_page = response.xpath('//div[@class="pager"]/a[data-nav="next"]').get()
+        print(next_page)
 
-                #la base de datos no admite un diccionario anidado (por ahora)
-                #por eso se cambia data en cada loop y se sube el siccionario de 1 solo producto
-
-                data[key] = {
-                    "Nombre" : key,
-                    "Precio" : product.xpath('.//span[@class="price_regular_precio"]/text()').get(),
-                    "Oferta" : product.xpath('.//span[@class="price_discount"]/text()').get(),
-                    "Descripcion_Oferta" : product.xpath('.//span[@class="text_price_discount"]/text()').get(),
-                }
-                #response = supabase.table(table_name).insert([data])
-        next_page = response.xpath('//a[@title="Siguiente"]/@href').get()
-
-
-        '''DESCOMENTAR PARA HABILITAR PAGINACION'''
-
-        #if next_page != None:
-        #    yield response.follow(next_page, callback=self.parse)
-
-    def close(self, reason):
-        print(data)
+        if next_page != None:
+            yield response.follow(next_page, callback=self.parse)
