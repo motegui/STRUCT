@@ -1,4 +1,3 @@
-
 import curlify
 from seleniumwire import webdriver
 import scrapy
@@ -11,10 +10,15 @@ from scrapy import Request
 from supabase import create_client
 from selenium.webdriver.chrome.options import Options
 import logging
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+'''import seleniumwire.undetected_chromedriver as uc'''
 
 #set headless
 #chrome_options = Options()
 #chrome_options.add_argument("--headless")
+#chrome_options = uc.ChromeOptions()
 options = {
     'connection_timeout': 10  # Timeout in seconds
 }
@@ -29,13 +33,14 @@ logger.setLevel(logging.WARNING)
 #supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZHBjcHNyeWl4amNnbHdxZmFhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NDEwOTg2MCwiZXhwIjoyMDA5Njg1ODYwfQ.oUzvMvpkrEL7FRsQF5x0dWS5gf8f0rqKBNx7O8f8EmY"
 #supabase = create_client(supabase_url, supabase_key)
 
-promos = [{}]
+promos = {}
+
 class testScraper(scrapy.Spider):
 
     name = 'promo'
     custom_settings = {
     'USER_AGENT' : 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-    
+    'DOWNLOAD_DELAY' :  2.5
     }
     #meter esta opcion en settings para evitar baneos
     #'DOWNLOAD_DELAY' :  2.5,
@@ -61,8 +66,6 @@ class testScraper(scrapy.Spider):
             if selenium_request.response and selenium_request.method=='GET' and 'contenthandler' in selenium_request.url and not 'scopes' in selenium_request.url:    
                 #solo se guardan las get request
                 #unicamente se parsean las url que contienen "contenthandler" pero no "scopes"
-                
-                
                 print("##### GET REQUEST CAUGHT #####")
                 print(selenium_request)
                 curl_commands.append(curlify.to_curl(selenium_request))
@@ -123,7 +126,43 @@ class testScraper(scrapy.Spider):
                 'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
             }
             #se guarda cada entry en la lista de entries
-            promos.append(entry)
+            #promos.append(entry)
+            promos[title] = entry
+    #codigo para paginacion
+    #si existe link de paginacion, se lo mando a parse para que se repita el proceso
+        '''pagenbr=2
+        next_page = driver.find_element(By.XPATH, f'//div[@class="pager"]/a[@data-page="{pagenbr}"]').get_attribute('href')
+        
+        pagenbr+=1
+        print("next: " +next_page)
+        print("first: " +first_page)'''
+
+        '''#la ultima pagina loopea otra vez a la primera, chequeo que no sea la proxima la primera
+        #osea que no este en la ultima pagina, en ese caso termino el parseo de la paginacion
+        if(next_page!=first_page):
+            print("####NEXT FOUND#####")
+            #yield scrapy.Request(url=next_page, callback=self.parse)
+        #si no existe debe terminar la cadena de ejecucion de metodos, simplemente retorno
+        else:
+            return'''
+        try:
+            elem = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]'))
+            )
+            elem.click()
+            current_url = driver.current_url    #testea si paso de la ultima pagina a la primera
+            next_button_status = driver.find_element(By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]').get_attribute('class')
+            if(next_button_status=="inactive"):
+                driver.close()
+                return
+            else:
+                print("####EXITO###########")
+                yield scrapy.Request(url=current_url, callback=self.parse)
+        except:
+            pass
+    
+    def close(self, reason):
+        
 
 #configuracion de console log
 #configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
@@ -139,11 +178,5 @@ reactor.run()  # the script will block here until the crawling is finished
 print(promos)
 #inserta resultados en un archivo JSON
 file_path = "dict.json"
-mydict = {{}}
-count = 1
-for prom in promos:
-    mydict[count] = prom
-    count+=1
-print(mydict)
 with open(file_path, "w", encoding="utf-8") as json_file:
     json.dump(promos, json_file, ensure_ascii=False)
