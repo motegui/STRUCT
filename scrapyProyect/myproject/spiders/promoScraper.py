@@ -288,7 +288,7 @@ class promoScraper(scrapy.Spider):
 
             supabase.table("LOCAL").insert(localEntry).execute()
         
-    
+   
 
     #def close(self, reason):
 

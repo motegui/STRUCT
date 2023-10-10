@@ -40,6 +40,7 @@ class testScraper(scrapy.Spider):
     name = 'promo'
     custom_settings = {
     'USER_AGENT' : 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    'DOWNLOAD_DELAY' :  2.5
     }
     #meter esta opcion en settings para evitar baneos
     #'DOWNLOAD_DELAY' :  2.5,
@@ -57,7 +58,7 @@ class testScraper(scrapy.Spider):
         url_to_get = response.url
 
         # Navigate to a website
-        driver.get('https://www.santander.com.ar/banco/online/personas/beneficios/compras?pagina=25')
+        driver.get(url_to_get)
 
         # Get the requests made by the browser
         selenium_requests = driver.requests
@@ -69,6 +70,7 @@ class testScraper(scrapy.Spider):
                 print(selenium_request)
                 curl_commands.append(curlify.to_curl(selenium_request))
  
+
         #le pasa cada request al metodo handle
         for curl_command in curl_commands: 
             request = Request.from_curl(curl_command=curl_command, callback=self.handle_content)
@@ -89,17 +91,78 @@ class testScraper(scrapy.Spider):
             title = promocion.xpath('./atom:title/text()', namespaces=namespaces).get()
             if title == None:
                 pass
-        current_url = driver.current_url    #testea si paso de la ultima pagina a la primera
-        print("current url: " + current_url)
-        next_button_status = driver.find_element(By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]').get_attribute('class')
-        print("boton: " + next_button_status)
-        if(next_button_status=="inactive"):
-            print("QUIT")
-            driver.close()
-            return
+
+
+            #la fecha esta en millis, la paso a utc
+            
+            start_timestamp = promocion.xpath('./wplc:field[@id="publishdate"]/text()', namespaces=namespaces).get()
+            if(start_timestamp!=None):
+                start_date = datetime.datetime.utcfromtimestamp(int(start_timestamp)/1000)
+            else:
+                start_date = "None"
+            end_timestamp = promocion.xpath('./wplc:field[@id="expirationdate"]/text()', namespaces=namespaces).get()
+            if(end_timestamp!=None):
+                end_date = datetime.datetime.utcfromtimestamp(int(end_timestamp)/1000)
+            else:
+                end_date = "None"            
+
+            #elementos que se encuentran separados en el backend 
+            #pero deben mostrarse concatenados
+            beneficio1 = promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get()
+            if beneficio1 == None:
+                beneficio1 = ""
+            beneficio2 = promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get()
+            if beneficio2 == None:
+                beneficio2=""
+            #por ahora todo santander, luego se van a separar segun el banco
+            entry = {
+                'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
+                'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                'producto' : title,
+                'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
+                'beneficio_cuotas' : beneficio1 + ' ' + beneficio2,
+                'valido_hasta' : "{}".format(end_date) or None,
+                'valido_desde' : "{}".format(start_date) or None,
+                'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
+            }
+            #se guarda cada entry en la lista de entries
+            #promos.append(entry)
+            promos[title] = entry
+    #codigo para paginacion
+    #si existe link de paginacion, se lo mando a parse para que se repita el proceso
+        '''pagenbr=2
+        next_page = driver.find_element(By.XPATH, f'//div[@class="pager"]/a[@data-page="{pagenbr}"]').get_attribute('href')
+        
+        pagenbr+=1
+        print("next: " +next_page)
+        print("first: " +first_page)'''
+
+        '''#la ultima pagina loopea otra vez a la primera, chequeo que no sea la proxima la primera
+        #osea que no este en la ultima pagina, en ese caso termino el parseo de la paginacion
+        if(next_page!=first_page):
+            print("####NEXT FOUND#####")
+            #yield scrapy.Request(url=next_page, callback=self.parse)
+        #si no existe debe terminar la cadena de ejecucion de metodos, simplemente retorno
         else:
-            print("####EXITO###########")
-            #yield scrapy.Request(url=current_url, callback=self.parse)
+            return'''
+        try:
+            elem = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]'))
+            )
+            elem.click()
+            current_url = driver.current_url    #testea si paso de la ultima pagina a la primera
+            next_button_status = driver.find_element(By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]').get_attribute('class')
+            if(next_button_status=="inactive"):
+                driver.close()
+                return
+            else:
+                print("####EXITO###########")
+                yield scrapy.Request(url=current_url, callback=self.parse)
+        except:
+            pass
+    
+    def close(self, reason):
+        
 
 #configuracion de console log
 #configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
