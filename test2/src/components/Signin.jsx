@@ -1,7 +1,7 @@
 //tira un warning en consola al agregarlo en App.jsx, pero no logre identificar que es lo que lo dispara.
 //Debe ser algo de compatibilidad entre ChakraUI y las versiones del REACT(?)s
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Flex,
   Box,
@@ -15,8 +15,67 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { useSearch } from '../SearchContext';
+import { supabase } from '../supabase';
+import { useNavigate } from "react-router-dom";
 
 export default function Signin() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { setUserEmail , userEmail} = useSearch();
+  const { setUserName , userName} = useSearch();
+  const navi = useNavigate();
+
+  useEffect(() => {
+    // Update userEmail whenever email changes
+    setUserEmail(email);
+  }, [email, setUserEmail]);
+
+  const handleSignIn = async () => {
+    try {
+      const { user, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error(error.message);
+        // Handle error (e.g., show error message)
+      } else {
+        console.log('Signed in as', user);
+        const name = await getName(email);
+        setUserName(name);
+        console.log('name',userName);
+        console.log({userEmail});
+        navi("/");
+        // Redirect to the authenticated page or update your app state
+      }
+    } catch (error) {
+      console.error('Error signing in:', error.message);
+    }
+  };
+
+  async function getName(email){
+    const { data, error } = await supabase
+    .from('USUARIO')
+    .select('nombre')
+    .eq('Email', email)
+    .single();
+
+  if (error) {
+    console.error('Error fetching data:', error.message);
+    return null;
+  }
+
+  // If a match is found, data will contain the 'nombre' value
+  if (data) {
+    return data.nombre;
+  } else {
+    // Email not found
+    return null;
+  }
+}
+
   return (
     <Flex
       minH={'100vh'}
@@ -35,11 +94,17 @@ export default function Signin() {
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email</FormLabel>
-              <Input type="email" />
+              <Input type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Contraseña</FormLabel>
-              <Input type="password" />
+              <Input type="password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              />
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -54,7 +119,9 @@ export default function Signin() {
                 color={'white'}
                 _hover={{
                   bg: 'pink.300',
-                }}>
+                }}
+                onClick={handleSignIn}
+                >
                 Ingresar
               </Button>
             </Stack>

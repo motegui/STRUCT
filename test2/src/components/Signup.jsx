@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import {
   Flex,
   Box,
@@ -16,9 +16,59 @@ import {
   Link,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { supabase } from '../supabase';
+import { useSearch } from '../SearchContext';
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { setUserEmail , userEmail} = useSearch();
+  const navi = useNavigate();
+
+  useEffect(() => {
+    // Update userEmail whenever email changes
+    setUserEmail(email);
+  }, [email, setUserEmail]);
+
+  const handleSignUp = async () => {
+      const { user, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error(error.message);
+        // Handle sign-up error (e.g., show error message)
+      } else {
+        // Registration successful, you can also update user profile here
+        console.log('Registered as', user);
+        setUserEmail(email);
+
+        const { data, error } = await supabase
+        .from('USUARIO')
+        .insert([
+          {
+            Email: email,
+            nombre: firstName,
+            apellido: lastName,
+          },
+        ]);
+
+        if (error) {
+          console.error('Error storing user information:', error.message);
+        } else {
+          console.log('User information stored successfully:', data);
+          navi("../pages/MyWaitingVerificationEmail");
+        }
+      }
+  };
+
+
   return (
     <Flex
       minH={'100vh'}
@@ -44,24 +94,24 @@ export default function Signup() {
               <Box>
                 <FormControl id="firstName" isRequired>
                   <FormLabel>Nombre</FormLabel>
-                  <Input type="text" />
+                  <Input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
                 </FormControl>
               </Box>
               <Box>
                 <FormControl id="lastName">
                   <FormLabel>Apellido</FormLabel>
-                  <Input type="text" />
+                  <Input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
                 </FormControl>
               </Box>
             </HStack>
             <FormControl id="email" isRequired>
               <FormLabel>Email</FormLabel>
-              <Input type="email" />
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Contraseña</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? 'text' : 'password'} />
+                <Input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)}/>
                 <InputRightElement h={'full'}>
                   <Button
                     variant={'ghost'}
@@ -79,7 +129,9 @@ export default function Signup() {
                 color={'white'}
                 _hover={{
                     bg: 'pink.300',
-                }}>
+                }}
+                onClick={handleSignUp}
+                >
                 Registrarse
               </Button>
             </Stack>

@@ -11,7 +11,7 @@ import Daycard from "../components/Daycard"
 
 export default function Home(){
     
-    const { searchValue } = useSearch();
+    const { searchValue, userEmail , userName} = useSearch();
 
     return (
     <>
@@ -23,6 +23,9 @@ export default function Home(){
             <div className='category-col'>
             <Categorycard/>
             <Daycard />
+            <div>
+            {userName && <p>Welcome, {userName}!</p>}
+            </div>
             </div>
                 <div className='content-col'>
                     <MySearchMessage text={searchValue}/>
