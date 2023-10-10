@@ -8,12 +8,14 @@ import {
   Flex,
   Spacer,
   Button,
+  Collapse,
 } from '@chakra-ui/react';
 
 import React, { useState } from 'react';
 import Icon from '@mdi/react';
 import { mdiStar } from '@mdi/js';
 import { mdiStarOutline } from '@mdi/js';
+import { mdiChevronDown, mdiChevronUp  } from '@mdi/js';
 
 function evaluateDiaSemanal({data}) {
   const dia_semanal = Array.isArray(data?.dia_semanal)
@@ -132,6 +134,12 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
 
   const [isFavourite, setIsFavourite] = useState(false);
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   const toggleFavourite = () => {
     setIsFavourite(!isFavourite);
   };
@@ -153,45 +161,71 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       bg={isDatePriorToCurrent ? "#E3E1E3":"#F7F0F3"}
       margin={10}
       flex="1"
-    >
-      <img
-          src={img_banco} // Use the src from your data for img_banco
-          alt="Banco"
-          className="img_banco"
-        />
+      position="relative"
+      height="auto"
+    >     
+
+      <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+        <Button onClick={toggleFavourite} _hover={{ bg: 'pink.100' }} bg={isDatePriorToCurrent ? "#E3E1E3" : "#F7F0F3"} id="fav">
+          <Icon path={isFavourite ? mdiStar : mdiStarOutline} size={1} />
+        </Button>
+      </div>
+      <VStack>
         <img
-          src={img_local} // Use the src from your data for img_banco
-          alt="Banco"
-          className="img_banco"
+          src={img_local}
+          alt="Promoción"
+          className="myPromoImage"
         />
-      <Flex>
         <Text fontSize="2xl" fontWeight="bold">
         {beneficio_cuotas}
       </Text>
-      <Spacer />
-      <Button onClick={toggleFavourite} _hover={{ bg: 'pink.100'}} bg={isDatePriorToCurrent ? "#E3E1E3":"#F7F0F3"} id="fav"><Icon path={isFavourite? mdiStar:mdiStarOutline} size={1}/></Button>
-      </Flex>
+      </VStack>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
+      <VStack>
+        <img
+          src={img_banco}
+          alt="Banco"
+          className="myBankImage"
+        />
+      </VStack>
 
-      <Text fontSize="md">
-        {descripcion_descuento}
-      </Text>
+      <HStack justifyContent={"right"}>
+      <Button
+        onClick={toggleDropdown}
+        _hover={{ bg: 'pink.100' }}
+        bg={isDatePriorToCurrent ? "#E3E1E3" : "#F7F0F3"}
+        id="desc-toggle"
+      >
+        <Icon path={isDropdownOpen ? mdiChevronUp : mdiChevronDown} size={1} />
+      </Button>
+        </HStack>
+
+      <Collapse in={isDropdownOpen}>
+        <Text fontSize="md">{descripcion_descuento}</Text>
+        <br/>
+        {tarjeta.length>0 && (
+          <Text>
+          <strong>Tarjetas adheridas: </strong> {tarjeta.join(', ')}
+        </Text>
+        )}
+        <br/>
+        {producto && (
+          <Text>
+            <strong>Producto: </strong> {producto}
+          </Text>
+        )}
+        
+      </Collapse>
 
       <VStack align="start" mt={4} spacing={1}>
-        <Text fontSize="sm" fontWeight="bold">
-          Tarjeta:
-        </Text>
-        <Text fontSize="sm">{tarjeta}</Text>
         <Text fontSize="sm" fontWeight="bold">
           Local:
         </Text>
         <Text fontSize="sm">{local}</Text>
-        <Text fontSize="sm" fontWeight="bold">
-          Producto:
-        </Text>
-        <Text fontSize="sm">{producto}</Text>
       </VStack>
+
+      <Spacer/>
 
       <HStack mt={4} spacing={2}>
         <Text fontSize="sm">Valido hasta:</Text>
