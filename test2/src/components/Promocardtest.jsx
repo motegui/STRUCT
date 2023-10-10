@@ -120,7 +120,7 @@ function favsCheck(favsOnly,isFavourite){
 
 function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
 
-  const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;
+  const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal,img_local, img_banco} = data;
 
   const specialBoxes = evaluateDiaSemanal({data});
 
@@ -154,6 +154,16 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       margin={10}
       flex="1"
     >
+      <img
+          src={img_banco} // Use the src from your data for img_banco
+          alt="Banco"
+          className="img_banco"
+        />
+        <img
+          src={img_local} // Use the src from your data for img_banco
+          alt="Banco"
+          className="img_banco"
+        />
       <Flex>
         <Text fontSize="2xl" fontWeight="bold">
         {beneficio_cuotas}
