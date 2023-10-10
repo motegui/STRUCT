@@ -13,8 +13,6 @@ import { SearchProvider } from './SearchContext'
 export default function App(){
   return (
     <>
-    <SearchProvider>
-      <BrowserRouter>
         <Routes>
           <Route index element={<Home/>}/>
           <Route path="/pages/MySignup" element={<MySignup/>} />
@@ -23,8 +21,6 @@ export default function App(){
           <Route path="/pages/Maps" element={<Maps/>} />
           {/*<Route path="*" element={<NoPage/>}/>*/}
         </Routes>
-      </BrowserRouter>
-    </SearchProvider>
     </>
   )
 }
