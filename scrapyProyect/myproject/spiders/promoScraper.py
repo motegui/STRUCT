@@ -287,7 +287,15 @@ class promoScraper(scrapy.Spider):
             }
 
             supabase.table("LOCAL").insert(localEntry).execute()
-        
+
+            #imagen del descuento actual
+            imagen = promocion.xpath('./wplc:field[@id="imagenxsell"]/text()', namespaces=namespaces).get()
+            
+            #hardcodeado
+            #hay que usar la url y strippearlo para que coincida con el formato necesario
+            url_banco = "https://www.santander.com.ar"
+            url_imgen = url_banco + imagen
+
    
 
     #def close(self, reason):
