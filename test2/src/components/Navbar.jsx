@@ -288,7 +288,7 @@ const NAV_ITEMS = [
       ],
     },
     {
-      label: 'Contacto',
-      href: '#',
+      label: 'Maps',
+      href: '/pages/Maps',
     },
   ];
