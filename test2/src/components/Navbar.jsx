@@ -289,6 +289,6 @@ const NAV_ITEMS = [
     },
     {
       label: 'Maps',
-      href: '/pages/Maps',
+      href: '../pages/Maps',
     },
   ];
