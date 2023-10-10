@@ -265,22 +265,42 @@ class promoScraper(scrapy.Spider):
                 end_date = "None"            
 
             #por ahora todo santander, luego se van a separar segun el banco
+            #imagen del descuento actual
+            imagen = promocion.xpath('./wplc:field[@id="imagenxsell"]/text()', namespaces=namespaces).get()
+            imgbanco = '/banco/contenthandler/!ut/p/digest!XzWpHd4WWNGJyUWtkUvndg/dav/fs-type1/themes/SRP9Theme/images/layout/logo/santander-mobile.png'
+            #hardcodeado
+            #hay que usar la url y strippearlo para que coincida con el formato necesario
+            url_banco = "https://www.santander.com.ar"
+            url_imgen = url_banco + imagen
+
+
             entry = {
                 'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
                 'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
                 'producto' : promocion.xpath('./atom:title/text()', namespaces=namespaces).get(),
-                'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
+                'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).get(),
                 'beneficio_cuotas' : promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get() or ""+' '
                                     +promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get() or "",
                 'valido_hasta' : "{}".format(end_date) or None,
                 'valido_desde' : "{}".format(start_date) or None,
                 'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
+                'img_local':url_imgen,
+                'img_banco':'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Banco_santander_logo.svg/2560px-Banco_santander_logo.svg.png',
             }
             #se guarda cada entry en la lista de entries
             promos.append(entry)
             #se mete cada entry en supabase
             response = supabase.table("DESCUENTO").insert(entry).execute()
-        
+
+            localEntry = {
+                'nombre' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                'sede' : None,
+            }
+
+            supabase.table("LOCAL").insert(localEntry).execute()
+
+            
+
    
 
     #def close(self, reason):
