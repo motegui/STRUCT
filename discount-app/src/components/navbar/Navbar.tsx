@@ -27,6 +27,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import DiscountIcon from '@mui/icons-material/Discount';
+import { Link } from 'react-router-dom';
 
 
 const drawerWidth = 240;
@@ -266,7 +267,8 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '50%' }}>
-          {['Dashboard', 'Maps', 'Notifications', 'My profile'].map((text, index) => (
+          {['', 'maps', 'notifications', 'profile'].map((text, index) => (
+            <Link to={text}>
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -290,6 +292,7 @@ export default function MiniDrawer() {
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+            </Link>
           ))}
         </List>
       </Drawer>

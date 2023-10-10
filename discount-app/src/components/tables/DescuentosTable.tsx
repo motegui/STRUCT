@@ -50,7 +50,7 @@ export default function DescuentosTable() {
 
   return (
     <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid
+      <DataGrid getRowHeight={() => 'auto'}
         rows={rows ?? []}
         columns={cols}
         initialState={{

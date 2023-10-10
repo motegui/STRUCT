@@ -17,11 +17,6 @@ export default function LocalesTable() {
           width: 150 ,
         },
         {
-          field: 'tipo',
-          headerName: 'Tipo',
-          width: 150,
-        },
-        {
           field: 'sede',
           headerName: 'Sede',
           width: 150,
