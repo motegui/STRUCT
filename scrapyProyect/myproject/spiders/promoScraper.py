@@ -269,7 +269,7 @@ class promoScraper(scrapy.Spider):
                 'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
                 'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
                 'producto' : promocion.xpath('./atom:title/text()', namespaces=namespaces).get(),
-                'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
+                'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).get(),
                 'beneficio_cuotas' : promocion.xpath('.//wplc:field[@id="infobeneficiolinea1"]/text()', namespaces=namespaces).get() or ""+' '
                                     +promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get() or "",
                 'valido_hasta' : "{}".format(end_date) or None,
@@ -280,6 +280,13 @@ class promoScraper(scrapy.Spider):
             promos.append(entry)
             #se mete cada entry en supabase
             response = supabase.table("DESCUENTO").insert(entry).execute()
+
+            localEntry = {
+                'nombre' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                'sede' : None,
+            }
+
+            supabase.table("LOCAL").insert(localEntry).execute()
         
     
 
