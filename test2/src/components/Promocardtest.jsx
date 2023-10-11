@@ -153,6 +153,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
   if(!isSearchMatch || !isDayFiltered || (!isFavs)) return <></>;
   else
   return (
+
     <Box
       borderWidth="1px"
       borderRadius="md"
@@ -162,7 +163,6 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       margin={10}
       flex="1"
       position="relative"
-      height="auto"
     >     
 
       <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
