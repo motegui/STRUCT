@@ -23,9 +23,6 @@ export default function Home(){
             <div className='category-col'>
             <Categorycard/>
             <Daycard />
-            <div>
-            {userName && <p>Welcome, {userName}!</p>}
-            </div>
             </div>
                 <div className='content-col'>
                     <MySearchMessage text={searchValue}/>

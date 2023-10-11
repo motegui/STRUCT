@@ -24,13 +24,26 @@ import {
 import { Link } from 'react-router-dom';
 
 import { useSearch } from '../SearchContext';
+import {supabase} from '../supabase';
 
 export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure();
-  const { searchValue, setSearchValue } = useSearch();
+  const { searchValue, setSearchValue , userName, setUserName, setUserEmail, userEmail} = useSearch();
 
   const handleInputChange = (event) => {
     setSearchValue(event.target.value); // Update the search value in the context
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut(); // Log the user out
+      setUserName(''); // Clear the user name
+      setUserEmail(''); // Clear the user email
+      // Redirect the user to the login page or another appropriate page
+    } catch (error) {
+      console.error('Error logging out:', error);
+      // Handle any errors that occur during the logout process
+    }
   };
 
   return (
@@ -62,7 +75,7 @@ export default function NavBar() {
           </Flex>
         </Flex>
 
-        <Box>
+        <Box flex={1}>
         <Input
           type="text"
           placeholder="Buscar"
@@ -72,7 +85,7 @@ export default function NavBar() {
           borderWidth="2px"      // Set the border width
           borderRadius="full"
           p={2}
-          mr={50}
+          minWidth="100px"
           value={searchValue}
           onChange={handleInputChange}
         />
@@ -84,8 +97,19 @@ export default function NavBar() {
           direction={'row'}
           spacing={6}
           ml={10}>
-            
-          <Button as={Link}
+
+          {userName ? (
+            <>
+            <Text whiteSpace="nowrap">Holii {userName}!</Text>
+            <Button as={Link}
+            to="/"
+            fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={handleLogout}>
+            Cerrar Sesión
+          </Button>
+            </>
+          ) : (
+            <>
+            <Button as={Link}
             to="../pages/MySignin"
             fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
             Iniciar Sesión
@@ -104,6 +128,9 @@ export default function NavBar() {
             }}>
             Registrarse
           </Button>
+            </>
+          )
+          }
         </Stack>
       </Flex>
 
