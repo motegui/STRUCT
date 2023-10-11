@@ -113,6 +113,7 @@ body {
   grid-gap: 10px; /* Adjust as needed */
   max-width: 100%;
   grid-auto-rows: auto;
+  flex-grow: 1;
 }
 
 @media (max-width: 768px) {
