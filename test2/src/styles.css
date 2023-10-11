@@ -112,7 +112,6 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Define card width here */
   grid-gap: 10px; /* Adjust as needed */
   max-width: 100%;
-  grid-auto-rows: auto;
   flex-grow: 1;
 }
 
@@ -125,4 +124,10 @@ body {
 .cardContent {
   display: flex;
   flex-grow: 1;
+}
+
+.cardContent2{
+  display: flex;
+  flex-grow: 1;
+  height: auto;
 }

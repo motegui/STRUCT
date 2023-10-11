@@ -153,8 +153,8 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
   if(!isSearchMatch || !isDayFiltered || (!isFavs)) return <></>;
   else
   return (
-
-    <Box
+    <div className='cardContent2'>
+      <Box
       borderWidth="1px"
       borderRadius="md"
       p={4}
@@ -163,6 +163,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       margin={10}
       flex="1"
       position="relative"
+      style={{height: 'auto'}}
     >     
 
       <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
@@ -304,6 +305,8 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       </Flex>
       )}
     </Box>
+    </div>
+    
   );
 }
 
