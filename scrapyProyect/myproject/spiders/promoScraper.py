@@ -30,6 +30,8 @@ driver = webdriver.Chrome(seleniumwire_options=options)
 #logger.setLevel(logging.WARNING)
 
 promos = [{}]
+IMAGEN_BANCO = ""
+TODAS_LAS_TARJETAS = []
 class promoScraper(scrapy.Spider):
 
     name = 'promo'
@@ -39,6 +41,8 @@ class promoScraper(scrapy.Spider):
     }
     #meter esta opcion en settings para evitar baneos
     #'DOWNLOAD_DELAY' :  2.5,
+
+    
 
     #retorna iterable de Requests, o un generador con yield
     def start_requests(self):
@@ -108,6 +112,8 @@ class promoScraper(scrapy.Spider):
             #hay que usar la url y strippearlo para que coincida con el formato necesario
             url_banco = "https://www.santander.com.ar"
             imglocal = url_banco + imagen
+            IMAGEN_BANCO = url_banco+imgbanco
+
 
             #elementos que se encuentran separados en el backend 
             #pero deben mostrarse concatenados
@@ -149,7 +155,7 @@ class promoScraper(scrapy.Spider):
                 #se mete cada entry en supabase
                 data, count = supabase.table("DESCUENTO").insert(entry).execute()
                 print("DATA: "+data)
-                supabase.table("LOCAL").insert(localEntry).execute()
+                #supabase.table("LOCAL").insert(localEntry).execute()
             except:
                 print("#####LA VAINA EXCEPCIONAL#####")
             if data:
@@ -176,14 +182,14 @@ class promoScraper(scrapy.Spider):
                 print(tarjetas_todas)
             
                 for tarjeta in tarjetas:
-                    data, count = supabase.table("TARJETA").select('descuentos').eq('nombre', tarjeta).execute()
+                    data, count = supabase.table("TARJETA").select('*').eq('nombre', tarjeta).execute()
                     descuentos = data[1]
-                    print("######DESCUENTOS: ")
-                    print(descuentos)
                     array = []
                     for descuento in descuentos:
                         if isinstance(descuento, dict):
-                            array.append(descuento["descuentos"])
+                            print("######DESCUENTOS-->ARRAY: ")
+                            print(descuento['descuentos'])
+                            array+descuento["descuentos"]
                     if id:
                         print(f"#############EL VERDADERO ID: {id}")
                         array.append(id)
@@ -191,10 +197,25 @@ class promoScraper(scrapy.Spider):
                         print(array)
                         supabase.table('TARJETA').upsert({'nombre':tarjeta, 'descuentos':array}).execute()
 
-        #supabase.table('BANCO').insert({'nombre':'Santander', 'imagen':(url_banco+imgbanco), 'tarjetas':tarjetas_todas}).execute()
+        
 
         for tarjeta in tarjetas_todas:
-            print("...")
+            data, count = supabase.table("TARJETA").select('descuentos').eq('nombre', tarjeta).execute()
+            descuentos = data[1]
+            
+            array = []
+            for descuento in descuentos:
+                if isinstance(descuento, dict):
+                    print("######DESCUENTOS-->ARRAY: ")
+                    print(descuento['descuentos'])
+                    array+descuento["descuentos"]
+            if desc_con_todas:
+                print(f"#############EL VERDADERO ID: {id}")
+                array+desc_con_todas
+                print("####EL ARRAY MISTICO:")
+                print(array)
+                supabase.table('TARJETA').upsert({'nombre':tarjeta, 'descuentos':array}).execute()
+            TODAS_LAS_TARJETAS = tarjetas_todas
         
         #ESTA LINEA ESTA AFUERA DEL FOR (o deberia)
         '''pagenbr=2
@@ -232,8 +253,8 @@ class promoScraper(scrapy.Spider):
             
 
 
-    #def close(self, reason):
-
+    def close(self, reason):
+        supabase.table('BANCO').insert({'nombre':'Santander', 'imagen':IMAGEN_BANCO, 'tarjetas':TODAS_LAS_TARJETAS}).execute()
 
 #configuracion de console log
 #configure_logging({"LOG_FORMAT": "%(levelname)s: %(message)s"})
