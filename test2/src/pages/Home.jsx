@@ -7,6 +7,7 @@ import Cardlist from "../components/Cardlist"
 import MySearchMessage from "../components/MySearchMessage"
 import { useSearch } from '../SearchContext';
 import Daycard from "../components/Daycard"
+import BankCard from "../components/BankCard"
 
 
 export default function Home(){
@@ -23,6 +24,7 @@ export default function Home(){
             <div className='category-col'>
             <Categorycard/>
             <Daycard />
+            <BankCard />
             </div>
                 <div className='content-col'>
                     <MySearchMessage text={searchValue}/>

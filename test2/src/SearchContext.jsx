@@ -19,6 +19,7 @@ export function SearchProvider({ children }) {
 
   const [userEmail, setUserEmail] = useState('');
   const [userName, setUserName] = useState('');
+  const [selectedBanks, setSelectedBanks] = useState([]);
 
   const updateCheckedCategories = (newCheckedCategories) => {
     setCheckedCategories(newCheckedCategories);
@@ -29,7 +30,7 @@ export function SearchProvider({ children }) {
   };
 
   return (
-    <SearchContext.Provider value={{ searchValue, setSearchValue, checkedCategories, updateCheckedCategories, showOnlyFavourites, updateShowOnlyFavourites, userEmail, setUserEmail, userName, setUserName}}>
+    <SearchContext.Provider value={{ searchValue, setSearchValue, checkedCategories, updateCheckedCategories, showOnlyFavourites, updateShowOnlyFavourites, userEmail, setUserEmail, userName, setUserName, selectedBanks, setSelectedBanks}}>
       {children}
     </SearchContext.Provider>
   );
