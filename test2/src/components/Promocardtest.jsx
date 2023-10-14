@@ -217,13 +217,22 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
     }
   };
 
+  function isBankMatch() {
+    // Check if the banco includes at least one of the selected banks
+    if (selectedBanks.length === 0) {
+      return true; // No bank selected, show all
+    }
+    
+    return selectedBanks.some(selectedBank => banco.includes(selectedBank));
+  }
+
   const databaseDate = new Date(valido_hasta);
   const currentDate = new Date();
   const isDatePriorToCurrent = databaseDate < currentDate;
   const isFavs = favsCheck(favsOnly,isFavourite);
 
 
-  if(!isSearchMatch || !isDayFiltered || (!isFavs)) return <></>;
+  if(!isSearchMatch || !isDayFiltered || (!isFavs) || (!isBankMatch())) return <></>;
   else
   return (
     <div className='cardContent2'>
