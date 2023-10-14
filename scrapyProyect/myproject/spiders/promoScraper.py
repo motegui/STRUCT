@@ -179,14 +179,20 @@ class promoScraper(scrapy.Spider):
             for tarjeta in tarjetas:
                 data, count = supabase.table("TARJETA").select('descuentos').eq('nombre', tarjeta).execute()
                 descuentos = data[1]
+                print("######DESCUENTOS: ")
+                print(descuentos)
                 array = []
                 for descuento in descuentos:
                     if isinstance(descuento, dict):
                         array.append(descuento["descuentos"])
                 if id:
-                    supabase.table("TARJETA").upsert({"nombre":tarjeta, "descuentos":array.append(id)}).execute()
+                    print(f"#############EL VERDADERO ID: {id}")
+                    array.append(id)
+                    print("####EL ARRAY MISTICO:")
+                    print(array)
+                    supabase.table('TARJETA').upsert({'nombre':tarjeta, 'descuentos':array}).execute()
 
-        supabase.table("BANCO").insert({"nombre":"Santander", "imagen":imgbanco, "tarjetas":tarjetas_todas}).execute()
+        #supabase.table('BANCO').insert({'nombre':'Santander', 'imagen':(url_banco+imgbanco), 'tarjetas':tarjetas_todas}).execute()
 
         #ESTA LINEA ESTA AFUERA DEL FOR (o deberia)
         '''pagenbr=2
