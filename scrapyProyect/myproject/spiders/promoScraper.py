@@ -105,7 +105,7 @@ class promoScraper(scrapy.Spider):
             #hardcodeado
             #hay que usar la url y strippearlo para que coincida con el formato necesario
             url_banco = "https://www.santander.com.ar"
-            url_imgen = url_banco + imagen
+            imglocal = url_banco + imagen
 
             #elementos que se encuentran separados en el backend 
             #pero deben mostrarse concatenados
@@ -115,31 +115,38 @@ class promoScraper(scrapy.Spider):
             beneficio2 = promocion.xpath('.//wplc:field[@id="infobeneficiolinea2"]/text()', namespaces=namespaces).get()
             if beneficio2 == None:
                 beneficio2=""
+
+            tarjetas = promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall()
+            if not tarjetas:
+                tarjetas = ["TODAS"]
             #por ahora todo santander, luego se van a separar segun el banco
             entry = {
-                'tarjeta' : promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall(),
+                'tarjeta' : tarjetas,
                 'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
                 'producto' : title,
                 'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
-                'beneficio_cuotas' : beneficio1 + ' ' + beneficio2,
+                'beneficio' : beneficio1 + ' ' + beneficio2,
                 'valido_hasta' : "{}".format(end_date) or None,
                 'valido_desde' : "{}".format(start_date) or None,
                 'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
+                'img_banco' : imgbanco,
+                'img_local' : imglocal,
             }
             #se guarda cada entry en la lista de entries
             promos.append(entry)
-
-                
-
-            #se mete cada entry en supabase
-            response = supabase.table("DESCUENTO").insert(entry).execute()
-
+            
             localEntry = {
-                'nombre' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                'id' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
                 'sede' : None,
             }
+                
+            try:
+                #se mete cada entry en supabase
+                response = supabase.table("DESCUENTO").insert(entry).execute()
+                supabase.table("LOCAL").insert(localEntry).execute()
+            except:
+                print("ROMPISTE TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
 
-            supabase.table("LOCAL").insert(localEntry).execute()
 
         #ESTA LINEA ESTA AFUERA DEL FOR (o deberia)
         '''pagenbr=2
@@ -159,7 +166,7 @@ class promoScraper(scrapy.Spider):
             return'''
         
         #PAGINACION 
-        try:
+        '''try:
             elem = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]'))
             )
@@ -173,10 +180,9 @@ class promoScraper(scrapy.Spider):
                 print("####EXITO###########")
                 yield scrapy.Request(url=current_url, callback=self.parse)
         except:
-            pass
+            pass'''
             
 
-   
 
     #def close(self, reason):
 
