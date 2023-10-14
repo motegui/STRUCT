@@ -62,8 +62,6 @@ class promoScraper(scrapy.Spider):
             if selenium_request.response and selenium_request.method=='GET' and 'contenthandler' in selenium_request.url and not 'scopes' in selenium_request.url:    
                 #solo se guardan las get request
                 #unicamente se parsean las url que contienen "contenthandler" pero no "scopes"
-                print("##### GET REQUEST CAUGHT #####")
-                print(selenium_request)
                 curl_commands.append(curlify.to_curl(selenium_request))
  
 
@@ -84,7 +82,6 @@ class promoScraper(scrapy.Spider):
         
         tarjetas_todas = []
         imgbanco = '/banco/contenthandler/!ut/p/digest!XzWpHd4WWNGJyUWtkUvndg/dav/fs-type1/themes/SRP9Theme/images/layout/logo/santander-mobile.png'
-
         desc_con_todas = []
 
         for promocion in promociones:
@@ -145,34 +142,36 @@ class promoScraper(scrapy.Spider):
             localEntry = {
                 'id' : local,
                 'sede' : None,
-                'categoria' : promocion.xpath('./wplc:field[@id="rubro"]/text()', namespaces=namespaces).getAll(),
+                'categoria' : promocion.xpath('./wplc:field[@id="rubro"]/text()', namespaces=namespaces).getall(),
             }
 
             try:
                 #se mete cada entry en supabase
-                response = supabase.table("DESCUENTO").insert(entry).execute()#.select()
-                supabase.table("LOCAL").insert(localEntry).execute()
+                data, count = supabase.table("DESCUENTO").insert(entry).execute()
+                print("DATA: "+data)
+                #supabase.table("LOCAL").insert(localEntry).execute()
             except:
-                print("ROMPISTE TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+                print("#####LA VAINA EXCEPCIONAL#####")
+            if data:
+                print(f'ID: {data}')
+                print(f'ENTRY: {entry}')
             
-            print(f'ID: {response}')
-            print(f'ENTRY: {entry}')
 
-            #tarjetaEntry = {}
+            #tarjetaEntry = [{id:40}]
 
             #supabase.table("TARJETA").insert
 
-            if tarjetas != ["TODAS"]:
+            if tarjetas == ["TODAS"]:
+                desc_con_todas.append("####EL VERDADERO ID PAPASITO####")
+            else:
                 set1=set(tarjetas)
                 set2=set(tarjetas_todas)
-
                 set_result=set1.union(set2)
-
                 tarjetas_todas=list(set_result)
-            else:
-                desc_con_todas.append()
+                print("######TODAS LAS TARJETAS############")
+                print(tarjetas_todas)
             
-            supabase.table("TARJETA").insert().execute()
+            #supabase.table("TARJETA").insert().execute()
 
         supabase.table("BANCO").insert({"nombre":"Santander", "imagen":imgbanco, "tarjetas":tarjetas_todas}).execute()
 
