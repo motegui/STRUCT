@@ -11,11 +11,13 @@ import {
   Collapse,
 } from '@chakra-ui/react';
 
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Icon from '@mdi/react';
 import { mdiStar } from '@mdi/js';
 import { mdiStarOutline } from '@mdi/js';
 import { mdiChevronDown, mdiChevronUp  } from '@mdi/js';
+import { useSearch } from '../SearchContext';
+import { supabase } from '../supabase';
 
 function evaluateDiaSemanal({data}) {
   const dia_semanal = Array.isArray(data?.dia_semanal)
@@ -136,12 +138,76 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const {userEmail, userName} = useSearch();
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const toggleFavourite = () => {
+  //const toggleFavourite = () => {
+  //  setIsFavourite(!isFavourite);
+  //};
+
+  const toggleFavourite = async () => {
     setIsFavourite(!isFavourite);
+
+    const { data: userData, error } = await supabase
+          .from('USUARIO')
+          .select('promos_fav')
+          .eq('Email', userEmail);
+    if (error) {
+      console.error('Error fetching data:', error);
+      return;
+    }
+  
+    const currentPromosFav = userData[0]?.promos_fav || [];
+
+    let updatedPromosFav;
+/*
+    if(!currentPromosFav){
+      updatedPromosFav = [id];
+    }
+    else{
+      if (currentPromosFav.includes(id.toString())) {
+        updatedPromosFav = currentPromosFav.filter((promoid) => promoid !== id);
+      } else {
+        updatedPromosFav = [...currentPromosFav, id];
+      }
+    }*/
+
+    if (isFavourite) {
+      // If the item is already in the array, remove it
+      if (currentPromosFav.includes(id.toString())) {
+        console.log(`Removing item with id: ${data.id}`);
+        updatedPromosFav = currentPromosFav.filter(promoId => promoId !== id.toString());
+      } else {
+        console.log(`Item with id: ${id} is not in the array.`);
+        // Otherwise, just use the current array (no change needed)
+        updatedPromosFav = currentPromosFav;
+      }
+    } else {
+      // Add the item to the array if it's not already there
+      if (!currentPromosFav.includes(data.id.toString())) {
+        console.log(`Adding item with id: ${id}`);
+        updatedPromosFav = [...currentPromosFav, data.id.toString()];
+      } else {
+        console.log(`Item with id: ${id} is already in the array.`);
+        // Otherwise, just use the current array (no change needed)
+        updatedPromosFav = currentPromosFav;
+      }
+    }
+
+    // Make the API call to update the 'promos_fav' array for the existing row
+    const { data: updatedData, error2 } = await supabase
+      .from('USUARIO')
+      .update({
+        promos_fav: updatedPromosFav,
+      })
+      .eq('Email', userEmail);
+
+    if (error2) {
+      console.error('Error updating promos_fav:', error2);
+    }
   };
 
   const databaseDate = new Date(valido_hasta);
