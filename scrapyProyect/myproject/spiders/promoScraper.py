@@ -153,8 +153,15 @@ class promoScraper(scrapy.Spider):
             except:
                 print("#####LA VAINA EXCEPCIONAL#####")
             if data:
-                print(f'ID: {data}')
-                print(f'ENTRY: {entry}')
+                records = data[1]
+                for record in records:
+                    # Check if record is a dictionary
+                    if isinstance(record, dict):
+                        # Print the 'id' attribute of each dictionary
+                        print(f'ID: {record["id"]}')
+                
+                #print(f'ID: {record["id"]}')
+                #print(f'ENTRY: {entry}')
             
 
             #tarjetaEntry = [{id:40}]
