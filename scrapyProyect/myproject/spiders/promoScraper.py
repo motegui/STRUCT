@@ -166,7 +166,7 @@ class promoScraper(scrapy.Spider):
 
 
             if tarjetas == ["TODAS"]:
-                desc_con_todas.append("####EL VERDADERO ID PAPASITO####")
+                desc_con_todas.append(id)
             else:
                 set1=set(tarjetas)
                 set2=set(tarjetas_todas)
@@ -175,25 +175,27 @@ class promoScraper(scrapy.Spider):
                 print("######TODAS LAS TARJETAS############")
                 print(tarjetas_todas)
             
-
-            for tarjeta in tarjetas:
-                data, count = supabase.table("TARJETA").select('descuentos').eq('nombre', tarjeta).execute()
-                descuentos = data[1]
-                print("######DESCUENTOS: ")
-                print(descuentos)
-                array = []
-                for descuento in descuentos:
-                    if isinstance(descuento, dict):
-                        array.append(descuento["descuentos"])
-                if id:
-                    print(f"#############EL VERDADERO ID: {id}")
-                    array.append(id)
-                    print("####EL ARRAY MISTICO:")
-                    print(array)
-                    supabase.table('TARJETA').upsert({'nombre':tarjeta, 'descuentos':array}).execute()
+                for tarjeta in tarjetas:
+                    data, count = supabase.table("TARJETA").select('descuentos').eq('nombre', tarjeta).execute()
+                    descuentos = data[1]
+                    print("######DESCUENTOS: ")
+                    print(descuentos)
+                    array = []
+                    for descuento in descuentos:
+                        if isinstance(descuento, dict):
+                            array.append(descuento["descuentos"])
+                    if id:
+                        print(f"#############EL VERDADERO ID: {id}")
+                        array.append(id)
+                        print("####EL ARRAY MISTICO:")
+                        print(array)
+                        supabase.table('TARJETA').upsert({'nombre':tarjeta, 'descuentos':array}).execute()
 
         #supabase.table('BANCO').insert({'nombre':'Santander', 'imagen':(url_banco+imgbanco), 'tarjetas':tarjetas_todas}).execute()
 
+        for tarjeta in tarjetas_todas:
+            print("...")
+        
         #ESTA LINEA ESTA AFUERA DEL FOR (o deberia)
         '''pagenbr=2
         next_page = driver.find_element(By.XPATH, f'//div[@class="pager"]/a[@data-page="{pagenbr}"]').get_attribute('href')
