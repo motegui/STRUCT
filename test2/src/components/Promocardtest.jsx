@@ -280,8 +280,8 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
           className="myPromoImage"
         />
         ):(<></>)}
-        <Flex justifyContent="center" h="50px" align="flex-end">
-          <Text  fontSize="2xl" fontWeight="bold" textAlign="center" style={{ wordBreak: 'break-all' }}> {/* esto es para que siempre este centrado */}
+        <Flex justifyContent="center" h="75px" align="center">
+          <Text  fontSize="2xl" fontWeight="bold" textAlign="center" style={{ wordBreak: 'keep-all' }}> {/* esto es para que siempre este centrado */}
             {beneficio}
           </Text>
         </Flex>
