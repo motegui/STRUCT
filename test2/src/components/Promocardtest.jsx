@@ -144,9 +144,27 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  //const toggleFavourite = () => {
-  //  setIsFavourite(!isFavourite);
-  //};
+// Checa si ya esta como fav de la persona
+    const fetchUserData = async () => {
+      if(userEmail){
+      const { data: userData, error } = await supabase
+        .from('USUARIO')
+        .select('promos_fav')
+        .eq('Email', userEmail);
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
+
+      const promosFav = userData[0]?.promos_fav || [];
+      setIsFavourite(promosFav.includes(id.toString()));
+    }
+    };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [id, userEmail]);
 
   const toggleFavourite = async () => {
     setIsFavourite(!isFavourite);
@@ -163,17 +181,6 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
     const currentPromosFav = userData[0]?.promos_fav || [];
 
     let updatedPromosFav;
-/*
-    if(!currentPromosFav){
-      updatedPromosFav = [id];
-    }
-    else{
-      if (currentPromosFav.includes(id.toString())) {
-        updatedPromosFav = currentPromosFav.filter((promoid) => promoid !== id);
-      } else {
-        updatedPromosFav = [...currentPromosFav, id];
-      }
-    }*/
 
     if (isFavourite) {
       // If the item is already in the array, remove it
@@ -233,9 +240,11 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
     >     
 
       <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+        {userEmail ? (
         <Button onClick={toggleFavourite} _hover={{ bg: 'pink.100' }} bg={isDatePriorToCurrent ? "#E3E1E3" : "#F7F0F3"} id="fav">
           <Icon path={isFavourite ? mdiStar : mdiStarOutline} size={1} />
-        </Button>
+        </Button> //quiero que si o si este loggeado para esto
+        ):(<></>)}
       </div>
       <VStack>
         {img_local ? (
