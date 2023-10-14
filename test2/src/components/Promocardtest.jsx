@@ -122,9 +122,9 @@ function favsCheck(favsOnly,isFavourite){
   return !favsOnly || (favsOnly && isFavourite);
 }
 
-function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
+function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
 
-  const { beneficio, descripcion_descuento, tarjeta, titulo, valido_hasta,local,dia_semanal,img_local, id} = data;
+  const { beneficio, descripcion_descuento, tarjeta, titulo, valido_hasta,local,dia_semanal,img_local, id, banco} = data;
 
   const specialBoxes = evaluateDiaSemanal({data});
 
