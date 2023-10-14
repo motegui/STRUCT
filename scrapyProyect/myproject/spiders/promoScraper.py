@@ -81,6 +81,12 @@ class promoScraper(scrapy.Spider):
             promociones = response.xpath('//atom:entry', namespaces=namespaces)
         except scrapy.exceptions.NotSupported:
             return
+        
+        tarjetas_todas = []
+        imgbanco = '/banco/contenthandler/!ut/p/digest!XzWpHd4WWNGJyUWtkUvndg/dav/fs-type1/themes/SRP9Theme/images/layout/logo/santander-mobile.png'
+
+        desc_con_todas = []
+
         for promocion in promociones:
             title = promocion.xpath('./atom:title/text()', namespaces=namespaces).get()
             if title == None:
@@ -101,7 +107,6 @@ class promoScraper(scrapy.Spider):
             #por ahora todo santander, luego se van a separar segun el banco
             #imagen del descuento actual
             imagen = promocion.xpath('./wplc:field[@id="imagenxsell"]/text()', namespaces=namespaces).get()
-            imgbanco = '/banco/contenthandler/!ut/p/digest!XzWpHd4WWNGJyUWtkUvndg/dav/fs-type1/themes/SRP9Theme/images/layout/logo/santander-mobile.png'
             #hardcodeado
             #hay que usar la url y strippearlo para que coincida con el formato necesario
             url_banco = "https://www.santander.com.ar"
@@ -119,34 +124,57 @@ class promoScraper(scrapy.Spider):
             tarjetas = promocion.xpath('./wplc:field[@id="medios"]/text()', namespaces=namespaces).getall()
             if not tarjetas:
                 tarjetas = ["TODAS"]
+
+            local = promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get()
             #por ahora todo santander, luego se van a separar segun el banco
             entry = {
+                'banco' : 'Santander',
                 'tarjeta' : tarjetas,
-                'local' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
-                'producto' : title,
+                'local' : local,
+                'titulo' : title,
                 'dia_semanal' : promocion.xpath('./wplc:field[@id="diabox"]/text()', namespaces=namespaces).getall(),
                 'beneficio' : beneficio1 + ' ' + beneficio2,
                 'valido_hasta' : "{}".format(end_date) or None,
                 'valido_desde' : "{}".format(start_date) or None,
                 'descripcion_descuento' : promocion.xpath('./wplc:field[@id="description"]/text()', namespaces=namespaces).get(),
-                'img_banco' : imgbanco,
                 'img_local' : imglocal,
             }
             #se guarda cada entry en la lista de entries
             promos.append(entry)
             
             localEntry = {
-                'id' : promocion.xpath('./wplc:field[@id="empresa"]/text()', namespaces=namespaces).get(),
+                'id' : local,
                 'sede' : None,
+                'categoria' : promocion.xpath('./wplc:field[@id="rubro"]/text()', namespaces=namespaces).getAll(),
             }
-                
+
             try:
                 #se mete cada entry en supabase
-                response = supabase.table("DESCUENTO").insert(entry).execute()
+                response = supabase.table("DESCUENTO").insert(entry).execute()#.select()
                 supabase.table("LOCAL").insert(localEntry).execute()
             except:
                 print("ROMPISTE TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+            
+            print(f'ID: {response}')
+            print(f'ENTRY: {entry}')
 
+            #tarjetaEntry = {}
+
+            #supabase.table("TARJETA").insert
+
+            if tarjetas != ["TODAS"]:
+                set1=set(tarjetas)
+                set2=set(tarjetas_todas)
+
+                set_result=set1.union(set2)
+
+                tarjetas_todas=list(set_result)
+            else:
+                desc_con_todas.append()
+            
+            supabase.table("TARJETA").insert().execute()
+
+        supabase.table("BANCO").insert({"nombre":"Santander", "imagen":imgbanco, "tarjetas":tarjetas_todas}).execute()
 
         #ESTA LINEA ESTA AFUERA DEL FOR (o deberia)
         '''pagenbr=2
