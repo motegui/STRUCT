@@ -65,9 +65,9 @@ function doesSearchMatch({data}, searchValue) {
     ? data.dia_semanal.join(" ")
     : data?.dia_semanal || "";
 
-  const beneficio_cuotas = Array.isArray(data?.beneficio_cuotas)
-    ? data.beneficio_cuotas.join(" ")
-    : data?.beneficio_cuotas || "";
+  const beneficio = Array.isArray(data?.beneficio)
+    ? data.beneficio.join(" ")
+    : data?.beneficio || "";
 
     const descripcion_descuento = Array.isArray(data?.descripcion_descuento)
     ? data.descripcion_descuento.join(" ")
@@ -77,9 +77,9 @@ function doesSearchMatch({data}, searchValue) {
     ? data.tarjeta.join(" ")
     : data?.tarjeta || "";
 
-    const producto = Array.isArray(data?.producto)
-    ? data.producto.join(" ")
-    : data?.producto || "";
+    const titulo = Array.isArray(data?.titulo)
+    ? data.titulo.join(" ")
+    : data?.titulo || "";
 
     const valido_hasta = Array.isArray(data?.valido_hasta)
     ? data.valido_hasta.join(" ")
@@ -90,10 +90,10 @@ function doesSearchMatch({data}, searchValue) {
     : data?.local || "";
 
   if (
-    beneficio_cuotas.toLowerCase().includes(loweredSearchValue) ||
+    beneficio.toLowerCase().includes(loweredSearchValue) ||
     descripcion_descuento.toLowerCase().includes(loweredSearchValue) ||
     tarjeta.toLowerCase().includes(loweredSearchValue) ||
-    producto.toLowerCase().includes(loweredSearchValue) ||
+    titulo.toLowerCase().includes(loweredSearchValue) ||
     valido_hasta.toLowerCase().includes(loweredSearchValue) ||
     local.toLowerCase().includes(loweredSearchValue) ||
     dia_semanal.toLowerCase().includes(loweredSearchValue)
@@ -122,7 +122,7 @@ function favsCheck(favsOnly,isFavourite){
 
 function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
 
-  const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal,img_local, img_banco} = data;
+  const { beneficio, descripcion_descuento, tarjeta, titulo, valido_hasta,local,dia_semanal,img_local, id} = data;
 
   const specialBoxes = evaluateDiaSemanal({data});
 
@@ -172,23 +172,21 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
         </Button>
       </div>
       <VStack>
+        {img_local ? (
         <img
           src={img_local}
           alt="Promoción"
           className="myPromoImage"
         />
+        ):(<></>)}
+        
         <Text fontSize="2xl" fontWeight="bold">
-        {beneficio_cuotas}
+        {beneficio}
       </Text>
       </VStack>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
       <VStack>
-        <img
-          src={img_banco}
-          alt="Banco"
-          className="myBankImage"
-        />
       </VStack>
 
       <HStack justifyContent={"right"}>
@@ -211,9 +209,9 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
         </Text>
         )}
         <br/>
-        {producto && (
+        {titulo && (
           <Text>
-            <strong>Producto: </strong> {producto}
+            <strong>{titulo}</strong>
           </Text>
         )}
         

@@ -25,10 +25,12 @@ import { Link } from 'react-router-dom';
 
 import { useSearch } from '../SearchContext';
 import {supabase} from '../supabase';
+import { useNavigate } from "react-router-dom";
 
 export default function NavBar() {
   const { isOpen, onToggle } = useDisclosure();
   const { searchValue, setSearchValue , userName, setUserName, setUserEmail, userEmail} = useSearch();
+  const navi = useNavigate();
 
   const handleInputChange = (event) => {
     setSearchValue(event.target.value); // Update the search value in the context
@@ -39,6 +41,7 @@ export default function NavBar() {
       await supabase.auth.signOut(); // Log the user out
       setUserName(''); // Clear the user name
       setUserEmail(''); // Clear the user email
+      navi("/");
       // Redirect the user to the login page or another appropriate page
     } catch (error) {
       console.error('Error logging out:', error);
