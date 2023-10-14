@@ -149,7 +149,7 @@ class promoScraper(scrapy.Spider):
                 #se mete cada entry en supabase
                 data, count = supabase.table("DESCUENTO").insert(entry).execute()
                 print("DATA: "+data)
-                #supabase.table("LOCAL").insert(localEntry).execute()
+                supabase.table("LOCAL").insert(localEntry).execute()
             except:
                 print("#####LA VAINA EXCEPCIONAL#####")
             if data:
@@ -158,15 +158,12 @@ class promoScraper(scrapy.Spider):
                     # Check if record is a dictionary
                     if isinstance(record, dict):
                         # Print the 'id' attribute of each dictionary
-                        print(f'ID: {record["id"]}')
+                        id = record["id"]
                 
                 #print(f'ID: {record["id"]}')
                 #print(f'ENTRY: {entry}')
             
 
-            #tarjetaEntry = [{id:40}]
-
-            #supabase.table("TARJETA").insert
 
             if tarjetas == ["TODAS"]:
                 desc_con_todas.append("####EL VERDADERO ID PAPASITO####")
@@ -178,7 +175,16 @@ class promoScraper(scrapy.Spider):
                 print("######TODAS LAS TARJETAS############")
                 print(tarjetas_todas)
             
-            #supabase.table("TARJETA").insert().execute()
+
+            for tarjeta in tarjetas:
+                data, count = supabase.table("TARJETA").select('descuentos').eq('nombre', tarjeta).execute()
+                descuentos = data[1]
+                array = []
+                for descuento in descuentos:
+                    if isinstance(descuento, dict):
+                        array.append(descuento["descuentos"])
+                if id:
+                    supabase.table("TARJETA").upsert({"nombre":tarjeta, "descuentos":array.append(id)}).execute()
 
         supabase.table("BANCO").insert({"nombre":"Santander", "imagen":imgbanco, "tarjetas":tarjetas_todas}).execute()
 
