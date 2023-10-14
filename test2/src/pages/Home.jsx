@@ -22,7 +22,7 @@ export default function Home(){
         <div className="main">
         <div className='my-row'>
             <div className='category-col'>
-            <Categorycard/>
+            {userEmail ? <Categorycard/> : <></>}
             <Daycard />
             <BankCard />
             </div>

@@ -17,7 +17,7 @@ function Categorycard() {
       maxWidth="200px"
     >
         <Flex>
-          <Text>favsOnly</Text>
+          <Text>Filtrar Favoritos</Text>
           <Spacer/>
           <Checkbox 
                     size="md"

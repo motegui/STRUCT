@@ -13,9 +13,7 @@ function BankCard() {
                 console.error('Error fetching bank names:', error);
                 setBankNames([]);
             }
-            console.log('data',data);
         setBankNames(data.map((row) => row.nombre));
-        console.log("banknombre",bankNames);
     }
 
 

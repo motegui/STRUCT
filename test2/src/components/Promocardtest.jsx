@@ -140,9 +140,25 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
 
   const {userEmail, userName} = useSearch();
 
+  const [bankImage, setBankImage] = useState(null);
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const fetchBankImage = async () => {
+    const { data: userData, error } = await supabase
+        .from('BANCO')
+        .select('imagen')
+        .eq('nombre', banco);
+
+      if (error) {
+        console.error('Error fetching bank image:', error);
+        return;
+      }
+
+      setBankImage(data);
+  }
 
 // Checa si ya esta como fav de la persona
     const fetchUserData = async () => {
@@ -164,6 +180,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
 
   useEffect(() => {
     fetchUserData();
+    fetchBankImage();
   }, [id, userEmail]);
 
   const toggleFavourite = async () => {
@@ -263,14 +280,23 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
           className="myPromoImage"
         />
         ):(<></>)}
+        <Flex justifyContent="center" h="50px" align="flex-end">
+          <Text  fontSize="2xl" fontWeight="bold" textAlign="center" style={{ wordBreak: 'break-all' }}> {/* esto es para que siempre este centrado */}
+            {beneficio}
+          </Text>
+        </Flex>
         
-        <Text fontSize="2xl" fontWeight="bold">
-        {beneficio}
-      </Text>
       </VStack>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
       <VStack>
+      {bankImage ? (
+        <img
+          src={bankImage}
+          alt="Banco"
+          className="myBankImage"
+        />
+        ):(<></>)}
       </VStack>
 
       <HStack justifyContent={"right"}>
@@ -316,11 +342,11 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
       </HStack>
 
       {notABox ? (
-        <HStack justifyContent={"right"}>
+        <HStack justifyContent={"right"} h="30px">
           <Text size="sm" >{dia_semanal}</Text>
         </HStack>
       ):(
-        <Flex className="days-available" justifyContent={"right"}>
+        <Flex className="days-available" justifyContent={"right"} h="30px">
         <Box bg={specialBoxes.includes("L") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
