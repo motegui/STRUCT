@@ -9,6 +9,7 @@ function Cardlist() {
     const { searchValue } = useSearch();
     const { checkedCategories } = useSearch();
     const { showOnlyFavourites } = useSearch();
+    const {selectedBanks} = useSearch();
 
 
     useEffect(() => {
@@ -29,12 +30,16 @@ function Cardlist() {
         }, []);
 
   return (
-    <div className="card-list">
-      <h1>{searchValue}</h1>
+    <div className='cardlistContainer'>
+      <div className="card-list">
       {cards.map((cardData, index) => (
-        <Promocardtest key={index} data={cardData} searchValue={searchValue} checkedDays={checkedCategories} favsOnly={showOnlyFavourites}/>
+        <div key={index} className='cardContent'>
+          <Promocardtest key={index} data={cardData} searchValue={searchValue} checkedDays={checkedCategories} favsOnly={showOnlyFavourites} selectedBanks={selectedBanks}/>
+        </div>
       ))}
     </div>
+    </div>
+    
   );
 }
 

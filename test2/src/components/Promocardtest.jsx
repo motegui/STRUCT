@@ -8,12 +8,16 @@ import {
   Flex,
   Spacer,
   Button,
+  Collapse,
 } from '@chakra-ui/react';
 
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Icon from '@mdi/react';
 import { mdiStar } from '@mdi/js';
 import { mdiStarOutline } from '@mdi/js';
+import { mdiChevronDown, mdiChevronUp  } from '@mdi/js';
+import { useSearch } from '../SearchContext';
+import { supabase } from '../supabase';
 
 function evaluateDiaSemanal({data}) {
   const dia_semanal = Array.isArray(data?.dia_semanal)
@@ -63,9 +67,9 @@ function doesSearchMatch({data}, searchValue) {
     ? data.dia_semanal.join(" ")
     : data?.dia_semanal || "";
 
-  const beneficio_cuotas = Array.isArray(data?.beneficio_cuotas)
-    ? data.beneficio_cuotas.join(" ")
-    : data?.beneficio_cuotas || "";
+  const beneficio = Array.isArray(data?.beneficio)
+    ? data.beneficio.join(" ")
+    : data?.beneficio || "";
 
     const descripcion_descuento = Array.isArray(data?.descripcion_descuento)
     ? data.descripcion_descuento.join(" ")
@@ -75,9 +79,9 @@ function doesSearchMatch({data}, searchValue) {
     ? data.tarjeta.join(" ")
     : data?.tarjeta || "";
 
-    const producto = Array.isArray(data?.producto)
-    ? data.producto.join(" ")
-    : data?.producto || "";
+    const titulo = Array.isArray(data?.titulo)
+    ? data.titulo.join(" ")
+    : data?.titulo || "";
 
     const valido_hasta = Array.isArray(data?.valido_hasta)
     ? data.valido_hasta.join(" ")
@@ -88,10 +92,10 @@ function doesSearchMatch({data}, searchValue) {
     : data?.local || "";
 
   if (
-    beneficio_cuotas.toLowerCase().includes(loweredSearchValue) ||
+    beneficio.toLowerCase().includes(loweredSearchValue) ||
     descripcion_descuento.toLowerCase().includes(loweredSearchValue) ||
     tarjeta.toLowerCase().includes(loweredSearchValue) ||
-    producto.toLowerCase().includes(loweredSearchValue) ||
+    titulo.toLowerCase().includes(loweredSearchValue) ||
     valido_hasta.toLowerCase().includes(loweredSearchValue) ||
     local.toLowerCase().includes(loweredSearchValue) ||
     dia_semanal.toLowerCase().includes(loweredSearchValue)
@@ -118,9 +122,9 @@ function favsCheck(favsOnly,isFavourite){
   return !favsOnly || (favsOnly && isFavourite);
 }
 
-function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
+function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
 
-  const { beneficio_cuotas, descripcion_descuento, tarjeta, producto, valido_hasta,local,dia_semanal } = data;
+  const { beneficio, descripcion_descuento, tarjeta, titulo, valido_hasta,local,dia_semanal,img_local, id, banco} = data;
 
   const specialBoxes = evaluateDiaSemanal({data});
 
@@ -132,9 +136,112 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
 
   const [isFavourite, setIsFavourite] = useState(false);
 
-  const toggleFavourite = () => {
-    setIsFavourite(!isFavourite);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const {userEmail, userName} = useSearch();
+
+  const [bankImage, setBankImage] = useState(null);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const fetchBankImage = async () => {
+    const { data: userData, error } = await supabase
+        .from('BANCO')
+        .select('imagen')
+        .eq('nombre', banco);
+
+      if (error) {
+        console.error('Error fetching bank image:', error);
+        return;
+      }
+
+      setBankImage(data);
+  }
+
+// Checa si ya esta como fav de la persona
+    const fetchUserData = async () => {
+      if(userEmail){
+      const { data: userData, error } = await supabase
+        .from('USUARIO')
+        .select('promos_fav')
+        .eq('Email', userEmail);
+
+      if (error) {
+        console.error('Error fetching user data:', error);
+        return;
+      }
+
+      const promosFav = userData[0]?.promos_fav || [];
+      setIsFavourite(promosFav.includes(id.toString()));
+    }
+    };
+
+  useEffect(() => {
+    fetchUserData();
+    fetchBankImage();
+  }, [id, userEmail]);
+
+  const toggleFavourite = async () => {
+    setIsFavourite(!isFavourite);
+
+    const { data: userData, error } = await supabase
+          .from('USUARIO')
+          .select('promos_fav')
+          .eq('Email', userEmail);
+    if (error) {
+      console.error('Error fetching data:', error);
+      return;
+    }
+  
+    const currentPromosFav = userData[0]?.promos_fav || [];
+
+    let updatedPromosFav;
+
+    if (isFavourite) {
+      // If the item is already in the array, remove it
+      if (currentPromosFav.includes(id.toString())) {
+        console.log(`Removing item with id: ${data.id}`);
+        updatedPromosFav = currentPromosFav.filter(promoId => promoId !== id.toString());
+      } else {
+        console.log(`Item with id: ${id} is not in the array.`);
+        // Otherwise, just use the current array (no change needed)
+        updatedPromosFav = currentPromosFav;
+      }
+    } else {
+      // Add the item to the array if it's not already there
+      if (!currentPromosFav.includes(data.id.toString())) {
+        console.log(`Adding item with id: ${id}`);
+        updatedPromosFav = [...currentPromosFav, data.id.toString()];
+      } else {
+        console.log(`Item with id: ${id} is already in the array.`);
+        // Otherwise, just use the current array (no change needed)
+        updatedPromosFav = currentPromosFav;
+      }
+    }
+
+    // Make the API call to update the 'promos_fav' array for the existing row
+    const { data: updatedData, error2 } = await supabase
+      .from('USUARIO')
+      .update({
+        promos_fav: updatedPromosFav,
+      })
+      .eq('Email', userEmail);
+
+    if (error2) {
+      console.error('Error updating promos_fav:', error2);
+    }
+  };
+
+  function isBankMatch() {
+    // Check if the banco includes at least one of the selected banks
+    if (selectedBanks.length === 0) {
+      return true; // No bank selected, show all
+    }
+    
+    return selectedBanks.some(selectedBank => banco.includes(selectedBank));
+  }
 
   const databaseDate = new Date(valido_hasta);
   const currentDate = new Date();
@@ -142,10 +249,11 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
   const isFavs = favsCheck(favsOnly,isFavourite);
 
 
-  if(!isSearchMatch || !isDayFiltered || (!isFavs)) return <></>;
+  if(!isSearchMatch || !isDayFiltered || (!isFavs) || (!isBankMatch())) return <></>;
   else
   return (
-    <Box
+    <div className='cardContent2'>
+      <Box
       borderWidth="1px"
       borderRadius="md"
       p={4}
@@ -153,35 +261,80 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       bg={isDatePriorToCurrent ? "#E3E1E3":"#F7F0F3"}
       margin={10}
       flex="1"
-    >
-      <Flex>
-        <Text fontSize="2xl" fontWeight="bold">
-        {beneficio_cuotas}
-      </Text>
-      <Spacer />
-      <Button onClick={toggleFavourite} _hover={{ bg: 'pink.100'}} bg={isDatePriorToCurrent ? "#E3E1E3":"#F7F0F3"} id="fav"><Icon path={isFavourite? mdiStar:mdiStarOutline} size={1}/></Button>
-      </Flex>
+      position="relative"
+      style={{height: 'auto'}}
+    >     
+
+      <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+        {userEmail ? (
+        <Button onClick={toggleFavourite} _hover={{ bg: 'pink.100' }} bg={isDatePriorToCurrent ? "#E3E1E3" : "#F7F0F3"} id="fav">
+          <Icon path={isFavourite ? mdiStar : mdiStarOutline} size={1} />
+        </Button> //quiero que si o si este loggeado para esto
+        ):(<></>)}
+      </div>
+      <VStack>
+        {img_local ? (
+        <img
+          src={img_local}
+          alt="Promoción"
+          className="myPromoImage"
+        />
+        ):(<></>)}
+        <Flex justifyContent="center" h="75px" align="center">
+          <Text  fontSize="2xl" fontWeight="bold" textAlign="center" style={{ wordBreak: 'keep-all' }}> {/* esto es para que siempre este centrado */}
+            {beneficio}
+          </Text>
+        </Flex>
+        
+      </VStack>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
+      <VStack>
+      {bankImage ? (
+        <img
+          src={bankImage}
+          alt="Banco"
+          className="myBankImage"
+        />
+        ):(<></>)}
+      </VStack>
 
-      <Text fontSize="md">
-        {descripcion_descuento}
-      </Text>
+      <HStack justifyContent={"right"}>
+      <Button
+        onClick={toggleDropdown}
+        _hover={{ bg: 'pink.100' }}
+        bg={isDatePriorToCurrent ? "#E3E1E3" : "#F7F0F3"}
+        id="desc-toggle"
+      >
+        <Icon path={isDropdownOpen ? mdiChevronUp : mdiChevronDown} size={1} />
+      </Button>
+        </HStack>
+
+      <Collapse in={isDropdownOpen}>
+        <Text fontSize="md">{descripcion_descuento}</Text>
+        <br/>
+        {tarjeta.length>0 && (
+          <Text>
+          <strong>Tarjetas adheridas: </strong> {tarjeta.join(', ')}
+        </Text>
+        )}
+        <br/>
+        {titulo && (
+          <Text>
+            <strong>{titulo}</strong>
+          </Text>
+        )}
+        
+      </Collapse>
 
       <VStack align="start" mt={4} spacing={1}>
-        <Text fontSize="sm" fontWeight="bold">
-          Tarjeta:
-        </Text>
-        <Text fontSize="sm">{tarjeta}</Text>
         <Text fontSize="sm" fontWeight="bold">
           Local:
         </Text>
         <Text fontSize="sm">{local}</Text>
-        <Text fontSize="sm" fontWeight="bold">
-          Producto:
-        </Text>
-        <Text fontSize="sm">{producto}</Text>
       </VStack>
+
+      <Spacer/>
 
       <HStack mt={4} spacing={2}>
         <Text fontSize="sm">Valido hasta:</Text>
@@ -189,11 +342,11 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       </HStack>
 
       {notABox ? (
-        <HStack justifyContent={"right"}>
+        <HStack justifyContent={"right"} h="30px">
           <Text size="sm" >{dia_semanal}</Text>
         </HStack>
       ):(
-        <Flex className="days-available" justifyContent={"right"}>
+        <Flex className="days-available" justifyContent={"right"} h="30px">
         <Box bg={specialBoxes.includes("L") ? "#CCCCCC" : "#F7F0F3"}
         border="1px solid #CCCCCC" 
         borderRadius="2px" 
@@ -260,6 +413,8 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly}) {
       </Flex>
       )}
     </Box>
+    </div>
+    
   );
 }
 
