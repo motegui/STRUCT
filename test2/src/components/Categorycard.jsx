@@ -15,6 +15,7 @@ function Categorycard() {
       borderRadius="md"
       margin="10"
       maxWidth="200px"
+      height="40px"
     >
         <Flex>
           <Text>Filtrar Favoritos</Text>

@@ -22,9 +22,10 @@ export default function Home(){
       
       const FiltersStyles = {
         position: 'sticky',
-        top: 0,
+        top: "90px",
         left: 0,
         zIndex: 2,
+        height: "400px",
       };
 
       const ContentStyles = {
