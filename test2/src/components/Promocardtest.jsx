@@ -122,7 +122,7 @@ function favsCheck(favsOnly,isFavourite){
   return !favsOnly || (favsOnly && isFavourite);
 }
 
-function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
+function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, selectedLocal}) {
 
   const { beneficio, descripcion_descuento, tarjeta, titulo, valido_hasta,local,dia_semanal,img_local, id, banco} = data;
 
@@ -235,12 +235,19 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
   };
 
   function isBankMatch() {
-    // Check if the banco includes at least one of the selected banks
     if (selectedBanks.length === 0) {
-      return true; // No bank selected, show all
+      return true;
     }
     
     return selectedBanks.some(selectedBank => banco.includes(selectedBank));
+  }
+
+  function isLocalMatch(){
+    if (selectedLocal.length === 0) {
+      return true;
+    }
+    
+    return selectedLocal.some(selectedLocal => local.includes(selectedLocal));
   }
 
   const databaseDate = new Date(valido_hasta);
@@ -249,7 +256,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
   const isFavs = favsCheck(favsOnly,isFavourite);
 
 
-  if(!isSearchMatch || !isDayFiltered || (!isFavs) || (!isBankMatch())) return <></>;
+  if(!isSearchMatch || !isDayFiltered || (!isFavs) || (!isBankMatch()) || (!isLocalMatch())) return <></>;
   else
   return (
     <div className='cardContent2'>
