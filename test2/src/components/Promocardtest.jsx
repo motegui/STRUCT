@@ -279,7 +279,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, sel
         </Button> //quiero que si o si este loggeado para esto
         ):(<></>)}
       </div>
-      <VStack>
+      <VStack align="center" minHeight="30px">
         {img_local ? (
         <img
           src={img_local}
@@ -296,7 +296,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, sel
       </VStack>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
-      <VStack>
+      <VStack align="center" height="40px">
       {bankImage ? (
         <img
           src={bankImage}
@@ -331,27 +331,27 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, sel
             <strong>{titulo}</strong>
           </Text>
         )}
+        <br/>
+        {local && (
+          <Text>
+          <strong>Local: </strong> {local}
+        </Text>
+        )}
         
       </Collapse>
 
-      <VStack align="start" mt={4} spacing={1}>
-        <Text fontSize="sm" fontWeight="bold">
-          Local:
-        </Text>
-        <Text fontSize="sm">{local}</Text>
-      </VStack>
-
       <Spacer/>
+      
+      <Flex height="50px" justifyContent="flex-end" flexDirection="column">
+        {valido_hasta && !isNaN(Date.parse(valido_hasta)) && (
+          <HStack spacing={2}>
+            <Text fontSize="sm">Hasta:</Text>
+            <Text size="sm" color={isDatePriorToCurrent ? "red":""}>{valido_hasta}</Text>
+          </HStack>
+          )}
 
-      <HStack mt={4} spacing={2}>
-        <Text fontSize="sm">Valido hasta:</Text>
-        <Text size="sm" color={isDatePriorToCurrent ? "red":""}>{valido_hasta}</Text>
-      </HStack>
-
-      {notABox ? (
-        <HStack justifyContent={"right"} h="30px">
-          <Text size="sm" >{dia_semanal}</Text>
-        </HStack>
+        {notABox ? (
+        <></>
       ):(
         <Flex className="days-available" justifyContent={"right"} h="30px">
         <Box bg={specialBoxes.includes("L") ? "#CCCCCC" : "#F7F0F3"}
@@ -419,6 +419,8 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, sel
         alignItems="center">D</Box>
       </Flex>
       )}
+      </Flex>
+      
     </Box>
     </div>
     
