@@ -14,11 +14,12 @@ function LocalCard() {
           setLocalNames([]);
         }
         setLocalNames(data.map((row) => row.id));
-        setLocalNames(localNames.slice().sort());
       };
 
     useEffect(() => {
         fetchLocalNames();
+        
+        setLocalNames(localNames.slice().sort());
     }, []);
 
     const handleLocalSelection = (event) => {
