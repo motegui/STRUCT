@@ -30,6 +30,7 @@ export default function GeocoderControl(props) {
     }, {
         position: props.position
     });
+    
     // @ts-ignore (TS2339) private member
     if (geocoder._map) {
         if (geocoder.getProximity() !== props.proximity && props.proximity !== undefined) {

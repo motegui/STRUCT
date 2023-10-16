@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@types/node": "^20.8.6",
+    "fs-js": "^1.0.6"
+  }
+}
