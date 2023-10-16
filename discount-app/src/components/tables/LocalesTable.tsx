@@ -2,7 +2,7 @@ import React from 'react'
 import {Box} from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { createClient } from '@supabase/supabase-js'
-const supabase = createClient('https://rkdpcpsryixjcglwqfaa.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrZHBjcHNyeWl4amNnbHdxZmFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQxMDk4NjAsImV4cCI6MjAwOTY4NTg2MH0.k1K1cSMSTg1L1zRhO9lllu72IGfl1UtRy88FJhahpxY')
+const supabase = createClient('https://rkdpcpsryixjcglwqfaa.supabase.co', process.env.REACT_APP_SUPABASE_TOKEN || '')
 
 
 let { data: rows, error } = await supabase

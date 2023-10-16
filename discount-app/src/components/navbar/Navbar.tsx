@@ -268,8 +268,8 @@ export default function MiniDrawer() {
         <Divider />
         <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '50%' }}>
           {['', 'maps', 'notifications', 'profile'].map((text, index) => (
-            <Link to={text}>
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+            <Link to={text} key={text}>
+            <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
