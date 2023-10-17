@@ -122,7 +122,7 @@ function favsCheck(favsOnly,isFavourite){
   return !favsOnly || (favsOnly && isFavourite);
 }
 
-function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
+function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, selectedLocal}) {
 
   const { beneficio, descripcion_descuento, tarjeta, titulo, valido_hasta,local,dia_semanal,img_local, id, banco} = data;
 
@@ -235,12 +235,19 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
   };
 
   function isBankMatch() {
-    // Check if the banco includes at least one of the selected banks
     if (selectedBanks.length === 0) {
-      return true; // No bank selected, show all
+      return true;
     }
     
     return selectedBanks.some(selectedBank => banco.includes(selectedBank));
+  }
+
+  function isLocalMatch(){
+    if (selectedLocal.length === 0) {
+      return true;
+    }
+    
+    return selectedLocal.some(selectedLocal => local.includes(selectedLocal));
   }
 
   const databaseDate = new Date(valido_hasta);
@@ -249,7 +256,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
   const isFavs = favsCheck(favsOnly,isFavourite);
 
 
-  if(!isSearchMatch || !isDayFiltered || (!isFavs) || (!isBankMatch())) return <></>;
+  if(!isSearchMatch || !isDayFiltered || (!isFavs) || (!isBankMatch()) || (!isLocalMatch())) return <></>;
   else
   return (
     <div className='cardContent2'>
@@ -272,7 +279,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
         </Button> //quiero que si o si este loggeado para esto
         ):(<></>)}
       </div>
-      <VStack>
+      <VStack align="center" minHeight="30px">
         {img_local ? (
         <img
           src={img_local}
@@ -289,7 +296,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
       </VStack>
       
       <Divider my={2} borderBottom="1px solid #CCCCCC"/>
-      <VStack>
+      <VStack align="center" height="40px">
       {bankImage ? (
         <img
           src={bankImage}
@@ -324,27 +331,27 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
             <strong>{titulo}</strong>
           </Text>
         )}
+        <br/>
+        {local && (
+          <Text>
+          <strong>Local: </strong> {local}
+        </Text>
+        )}
         
       </Collapse>
 
-      <VStack align="start" mt={4} spacing={1}>
-        <Text fontSize="sm" fontWeight="bold">
-          Local:
-        </Text>
-        <Text fontSize="sm">{local}</Text>
-      </VStack>
-
       <Spacer/>
+      
+      <Flex height="50px" justifyContent="flex-end" flexDirection="column">
+        {valido_hasta && !isNaN(Date.parse(valido_hasta)) && (
+          <HStack spacing={2}>
+            <Text fontSize="sm">Hasta:</Text>
+            <Text size="sm" color={isDatePriorToCurrent ? "red":""}>{valido_hasta}</Text>
+          </HStack>
+          )}
 
-      <HStack mt={4} spacing={2}>
-        <Text fontSize="sm">Valido hasta:</Text>
-        <Text size="sm" color={isDatePriorToCurrent ? "red":""}>{valido_hasta}</Text>
-      </HStack>
-
-      {notABox ? (
-        <HStack justifyContent={"right"} h="30px">
-          <Text size="sm" >{dia_semanal}</Text>
-        </HStack>
+        {notABox ? (
+        <></>
       ):(
         <Flex className="days-available" justifyContent={"right"} h="30px">
         <Box bg={specialBoxes.includes("L") ? "#CCCCCC" : "#F7F0F3"}
@@ -412,6 +419,8 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks}) {
         alignItems="center">D</Box>
       </Flex>
       )}
+      </Flex>
+      
     </Box>
     </div>
     

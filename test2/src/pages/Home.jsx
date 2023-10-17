@@ -5,6 +5,7 @@ import MySearchMessage from "../components/MySearchMessage"
 import { useSearch } from '../SearchContext';
 import Daycard from "../components/Daycard"
 import BankCard from "../components/BankCard"
+import LocalCard from "../components/LocalCard"
 import MyHeader from "../components/MyHeader"
 
 
@@ -44,6 +45,7 @@ export default function Home(){
             {userEmail ? <Categorycard/> : <></>}
             <Daycard />
             <BankCard />
+            <LocalCard />
             </div>
                 <div className='content-col' style={ContentStyles}>
                     <Cardlist/>
