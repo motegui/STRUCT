@@ -60,6 +60,7 @@ const Maps = () => {
         longitude: number;
         local: string;
         discount: string;
+        img: string;
     }
 
     async function fetchGeocode(place) {
@@ -76,7 +77,7 @@ const Maps = () => {
     async function fetchDatabase() {
         let { data: data, error } = await supabase
             .from('DESCUENTO')
-            .select('local,dia_semanal,descripcion_descuento');
+            .select('local,dia_semanal,descripcion_descuento,img_local');
         return data;
     }
 
@@ -108,8 +109,10 @@ const Maps = () => {
         localStorage.removeItem('geocode');
         let dbdata = await fetchDatabase();
         let map = new Map();
+        let imgMap = new Map();
         if (dbdata) {
             for (let i=0;i<dbdata.length;i++) {
+                imgMap.set(dbdata[i].local, dbdata[i].img_local + '\n');
                 if (map.get(dbdata[i].local)) {
                     map.set(dbdata[i].local, map.get(dbdata[i].local) + ',' + dbdata[i].descripcion_descuento + ',' + dbdata[i].dia_semanal + '\n');
                 } else {
@@ -118,7 +121,7 @@ const Maps = () => {
             }
            // todos los nombres de los locales sin repetir
             let keys = map.keys();
-           let set = new Set();
+            let set = new Set();
             for(let i=0;i<map.size;i++){
                 set.add(keys.next().value);
             } 
@@ -128,8 +131,9 @@ const Maps = () => {
             set.forEach(async (value) => {
                 let geocode = await fetchGeocode(value);
                 let entry = map.get(value);
+                let img = imgMap.get(value);
                 geocode?.forEach((feature) => {
-                    newObj.push({local:value, discount: entry, ...feature,});
+                    newObj.push({local:value, discount: entry, img: img, ...feature,});
                 }); 
                 
                 if (index === set.size-1)
@@ -154,7 +158,8 @@ const Maps = () => {
         latitude: poi.center[1],
         longitude: poi.center[0],
         local: poi.local,
-        discount: poi.discount
+        discount: poi.discount,
+        img: poi.img
     }));
         const [popupInfo, setPopupInfo] = useState<Marker | null>(null);
 
@@ -210,7 +215,8 @@ const Maps = () => {
                             onClose={() => setPopupInfo(null)}
                         >
                             <div>
-                                {popupInfo.local}<br />
+                                <h2 style={{textAlign: 'center'}}>{popupInfo.local}</h2><br />
+                                <img src={popupInfo.img} alt="local" width="200px" height="200px" /><br />
                                 {popupInfo.discount}
                             </div>
                         </Popup>
