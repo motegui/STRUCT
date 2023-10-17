@@ -84,7 +84,7 @@ const Maps = () => {
 
     // por cada local en la base de datos, buscar la geolocalizacion y guardarla en el localstorage
 
-    async function iterateOverAndSave() {
+   /*  async function iterateOverAndSave() {
         localStorage.removeItem('geocode');
         let dbdata = await fetchDatabase();
         let newObj = [{}];
@@ -99,7 +99,7 @@ const Maps = () => {
                     localStorage.setItem('geocode', JSON.stringify(newObj));
             }
         }
-    }
+    } */
 
     // para un mismo local, pueden haber muchas promociones
 
