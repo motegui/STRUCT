@@ -235,7 +235,7 @@ class promoScraper(scrapy.Spider):
             return'''
         
         #PAGINACION 
-        '''try:
+        try:
             elem = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="pager"]/a[@data-nav="next"]'))
             )
@@ -249,7 +249,7 @@ class promoScraper(scrapy.Spider):
                 print("####EXITO###########")
                 yield scrapy.Request(url=current_url, callback=self.parse)
         except:
-            pass'''
+            pass
             
 
 
