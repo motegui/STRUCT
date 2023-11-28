@@ -33,9 +33,7 @@ function Cardlist() {
     <div className='cardlistContainer'>
       <div className="card-list">
       {cards.map((cardData, index) => (
-        <div key={index} className='cardContent'>
           <Promocardtest key={index} data={cardData} searchValue={searchValue} checkedDays={checkedCategories} favsOnly={showOnlyFavourites} selectedBanks={selectedBanks} selectedLocal={selectedLocal}/>
-        </div>
       ))}
     </div>
     </div>
