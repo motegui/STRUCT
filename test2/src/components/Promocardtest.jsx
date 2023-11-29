@@ -157,7 +157,7 @@ function Promocardtest({data,searchValue,checkedDays,favsOnly,selectedBanks, sel
         return;
       }
 
-      setBankImage(data);
+      setBankImage(userData[0].imagen);
   }
 
 // Checa si ya esta como fav de la persona
