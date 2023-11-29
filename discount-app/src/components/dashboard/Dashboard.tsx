@@ -59,9 +59,7 @@ const Dashboard = (props) => {
             </Link>
           </Breadcrumbs>
         </div>
-        <div style={{display: 'flex', justifyContent: 'center', alignContent: 'center'}}>
-          <Button onClick={() => runScript()} fullWidth variant="contained">SCRAP BANK PAGES</Button>
-        </div>
+      
         
         <ButtonGroup sx={{ marginBottom: '20px', marginTop: '20px' }} fullWidth variant="outlined" aria-label="outlined button group">
           {allTables.map((table, index) => (

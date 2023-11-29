@@ -1,11 +1,12 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/system'
 import React, { useMemo, useState } from 'react';
-import MapGL, { GeolocateControl, Marker, NavigationControl, Popup } from 'react-map-gl';
+import MapGL, { GeolocateControl, Layer, Marker, NavigationControl, Popup, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import GeocoderControl from './geocoder-control';
 import { Button, buttonClasses } from '@mui/base';
 import { createClient } from '@supabase/supabase-js'
+import { clusterCountLayer, clusterLayer, unclusteredPointLayer } from './layers';
 const supabase = createClient('https://rkdpcpsryixjcglwqfaa.supabase.co', process.env.REACT_APP_SUPABASE_TOKEN || '')
 
 const blue = {
@@ -179,8 +180,8 @@ const Maps = () => {
                 </Marker>
                 
             ));
-            
 
+    
 
         return (
             <Box sx={{ width: '100%', height: '100%' }}>
@@ -206,8 +207,34 @@ const Maps = () => {
                         trackUserLocation={true}
 
                     />
-                    {pins}
-                    {popupInfo && (
+                    <Source
+                        id="locales"
+                        type="geojson"
+                        data={{
+                            type: 'FeatureCollection',
+                            features: newMarkers.map((marker) => ({
+                                type: 'Feature',
+                                properties: {
+                                    cluster: false,
+                                    local: marker.local,
+                                    discount: marker.discount,
+                                    img: marker.img
+                                },
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [marker.longitude, marker.latitude]
+                                }
+                            }))
+                        }}
+                        cluster={true}
+                        clusterMaxZoom={14}
+                        clusterRadius={50}
+                    >
+                        <Layer {...clusterLayer} />
+                        <Layer {...clusterCountLayer} />
+                        <Layer {...unclusteredPointLayer}>
+                        {pins}
+                        {popupInfo && (
                         <Popup
                             anchor="top"
                             longitude={popupInfo.longitude}
@@ -221,6 +248,23 @@ const Maps = () => {
                             </div>
                         </Popup>
                     )}
+                        </Layer>
+                    </Source>
+                    {/* {pins}
+                    {popupInfo && (
+                        <Popup
+                            anchor="top"
+                            longitude={popupInfo.longitude}
+                            latitude={popupInfo.latitude}
+                            onClose={() => setPopupInfo(null)}
+                        >
+                            <div>
+                                <h2 style={{textAlign: 'center'}}>{popupInfo.local}</h2><br />
+                                <img src={popupInfo.img} alt="local" width="200px" height="200px" /><br />
+                                {popupInfo.discount}
+                            </div>
+                        </Popup>
+                    )} */}
                 </MapGL>
             </Box>
         );

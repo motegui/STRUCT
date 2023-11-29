@@ -107,7 +107,7 @@ export default function MiniDrawer() {
 
 
   const pages = [];
-  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+  const settings = ['Profile', 'Logout'];
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -230,7 +230,7 @@ export default function MiniDrawer() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Remy Sharp" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -250,9 +250,12 @@ export default function MiniDrawer() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
+                <Link to={setting} key={setting}>
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                </Link>
+                
               ))}
             </Menu>
           </Box>
@@ -267,7 +270,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '50%' }}>
-          {['', 'maps', 'notifications', 'profile'].map((text, index) => (
+          {['', 'maps', 'profile'].map((text, index) => (
             <Link to={text} key={text}>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
@@ -286,8 +289,7 @@ export default function MiniDrawer() {
                 >
                   {index === 0 ? <HomeIcon /> : null}
                   {index === 1 ? <LocationOnIcon /> : null}
-                  {index === 2 ? <Notifications /> : null}
-                  {index === 3 ? <AccountCircleIcon /> : null}
+                  {index === 2 ? <AccountCircleIcon /> : null}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
