@@ -1,12 +1,13 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/system'
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import MapGL, { GeolocateControl, Layer, Marker, NavigationControl, Popup, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import GeocoderControl from './geocoder-control';
 import { Button, buttonClasses } from '@mui/base';
 import { createClient } from '@supabase/supabase-js'
 import { clusterCountLayer, clusterLayer, unclusteredPointLayer } from './layers';
+
 const supabase = createClient('https://rkdpcpsryixjcglwqfaa.supabase.co', process.env.REACT_APP_SUPABASE_TOKEN || '')
 
 const blue = {
@@ -181,6 +182,7 @@ const Maps = () => {
                 
             ));
 
+            
     
 
         return (
@@ -190,7 +192,26 @@ const Maps = () => {
                     <CustomButton style={{ marginTop: '70px', marginBottom: '10px', marginLeft: '10px' }} onClick={() => localStorage.removeItem('geocode')}>CLEAR LOCALSTORAGE</CustomButton>
                 </div>
                 <MapGL initialViewState={{ ...viewport }} mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ?? ''} style={{ width: '100%', height: '80vh'}}
-                    mapStyle="mapbox://styles/mapbox/streets-v9">
+                    mapStyle="mapbox://styles/mapbox/streets-v9"
+                    interactiveLayerIds={[unclusteredPointLayer.id!!]}
+                    onClick={(e) => {
+                        e.originalEvent.stopPropagation();
+                        const index = newMarkers.findIndex(marker => {
+                            const latitudeDiff = Math.abs(marker.latitude - e.lngLat.lat);
+                            const longitudeDiff = Math.abs(marker.longitude - e.lngLat.lng);
+                            const threshold = 0.0001; // Adjust this threshold as needed
+                            return latitudeDiff < threshold && longitudeDiff < threshold;
+                        });
+                        console.log(index);
+                        if (index === -1) {
+                            setPopupInfo(null);
+                        } else {
+                            setPopupInfo(null);
+                            setPopupInfo(newMarkers[index]);
+                            console.log(newMarkers[index])
+                        }
+
+                        }}>
                     <GeocoderControl mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} position="top-left" />
                     <NavigationControl position='bottom-right' />
                     <GeolocateControl
@@ -232,23 +253,21 @@ const Maps = () => {
                     >
                         <Layer {...clusterLayer} />
                         <Layer {...clusterCountLayer} />
-                        <Layer {...unclusteredPointLayer}>
-                        {pins}
+                        <Layer {...unclusteredPointLayer} />
                         {popupInfo && (
-                        <Popup
-                            anchor="top"
-                            longitude={popupInfo.longitude}
-                            latitude={popupInfo.latitude}
-                            onClose={() => setPopupInfo(null)}
-                        >
-                            <div>
-                                <h2 style={{textAlign: 'center'}}>{popupInfo.local}</h2><br />
-                                <img src={popupInfo.img} alt="local" width="200px" height="200px" /><br />
-                                {popupInfo.discount}
-                            </div>
-                        </Popup>
-                    )}
-                        </Layer>
+                            <Popup
+                                anchor="top"
+                                longitude={popupInfo.longitude}
+                                latitude={popupInfo.latitude}
+                                onClose={() => setPopupInfo(null)}
+                            >
+                                <div>
+                                    <h2 style={{ textAlign: 'center' }}>{popupInfo.local}</h2><br />
+                                    <img src={popupInfo.img} alt="local" width="200px" height="200px" /><br />
+                                    {popupInfo.discount}
+                                </div>
+                            </Popup>
+                        )}
                     </Source>
                     {/* {pins}
                     {popupInfo && (
