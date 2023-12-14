@@ -115,7 +115,6 @@ const Maps = () => {
         if (dbdata) {
             for (let i=0;i<dbdata.length;i++) {
                 imgMap.set(dbdata[i].local, dbdata[i].img_local + '\n');
-                console.log(dbdata[i].banco);
                 if (map.get(dbdata[i].local)) {
                     map.set(dbdata[i].local, map.get(dbdata[i].local) + ',' + dbdata[i].descripcion_descuento + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco +'\n');
                 } else {
@@ -267,7 +266,6 @@ const Maps = () => {
                     </Source>
                     {popupInfo && (
                         console.log("Popup Coordinates: ", popupInfo.longitude, popupInfo.latitude),
-                        console.log(popupInfo.discount.split('}')),
                         <Popup
                             anchor="top"
                             longitude={popupInfo.longitude}
