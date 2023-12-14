@@ -22,11 +22,6 @@ export default function DescuentosTable() {
           width: 150,
         },
         {
-          field: 'producto',
-          headerName: 'Producto',
-          width: 150,
-        },
-        {
           field: 'dia_semanal',
           headerName: 'Dias',
           width: 150,

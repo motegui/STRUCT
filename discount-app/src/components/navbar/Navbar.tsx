@@ -27,7 +27,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import DiscountIcon from '@mui/icons-material/Discount';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const drawerWidth = 240;
@@ -104,8 +104,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function MiniDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-
-
   const pages = [];
   const settings = ['Profile', 'Logout'];
 
@@ -133,6 +131,12 @@ export default function MiniDrawer() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleCloseUserMenuAndLogout = async () => {
+    localStorage.removeItem("discountIsLoggedIn");
+    setAnchorElUser(null);
+    window.location.reload();
   };
 
   return (
@@ -249,14 +253,14 @@ export default function MiniDrawer() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <Link to={setting} key={setting}>
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                </Link>
-                
-              ))}
+              <Link to="/profile">
+                <MenuItem onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">Profile</Typography>
+                </MenuItem>
+              </Link>
+              <MenuItem onClick={handleCloseUserMenuAndLogout}>
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

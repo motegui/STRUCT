@@ -1,12 +1,15 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/system'
-import React, { useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import MapGL, { GeolocateControl, Layer, Marker, NavigationControl, Popup, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import GeocoderControl from './geocoder-control';
 import { Button, buttonClasses } from '@mui/base';
 import { createClient } from '@supabase/supabase-js'
 import { clusterCountLayer, clusterLayer, unclusteredPointLayer } from './layers';
+import { useSearch } from '../SearchContext';
+import MyHeader from '../components/MyHeader';
+import MapsHeader from '../components/MapsHeader';
 
 const supabase = createClient('https://rkdpcpsryixjcglwqfaa.supabase.co', process.env.REACT_APP_SUPABASE_TOKEN || '')
 
@@ -55,6 +58,16 @@ const Maps = () => {
         longitude: -58.373919120610424,
         zoom: 14
     });
+
+    const { userEmail , userName} = useSearch();
+
+    const HeaderStyles = {
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        zIndex: 1,
+        width: '100%',
+      };
 
 
     interface Marker {
@@ -210,7 +223,11 @@ const Maps = () => {
     
 
         return (
-                <MapGL initialViewState={{ ...viewport }} mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ?? ''} style={{ width: '100%', height: '100vh'}}
+                <div className="body">
+                    <div style={HeaderStyles as CSSProperties}>
+                        <MapsHeader/>
+                    </div>
+                    <MapGL initialViewState={{ ...viewport }} mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ?? ''} style={{ width: '100%', height: '80vh'}}
                     mapStyle="mapbox://styles/mapbox/streets-v9"
                     interactiveLayerIds={['unclustered-point']}
                     onClick={(e) => {
@@ -304,6 +321,8 @@ const Maps = () => {
                         </Popup>
                     )} */}
                 </MapGL>
+                </div>
+                
         );
     }
 

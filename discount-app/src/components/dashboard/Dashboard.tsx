@@ -27,13 +27,6 @@ const Dashboard = (props) => {
     console.info('You clicked a breadcrumb.');
   }
 
-  async function runScript() {
-    
-    $.ajax({
-      type: 'POST',
-      url: new URL("./promoScraper.py", import.meta.url).href,
-  }).done( (data) => {alert(data)});
-  }
 
   const allTables = [
     {table: <DescuentosTable />, name: 'Descuentos'},
