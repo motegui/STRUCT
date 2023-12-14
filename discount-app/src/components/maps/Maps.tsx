@@ -156,7 +156,7 @@ const Maps = () => {
         await searchGeocode();
     };
 
-    const newMarkers: Marker[] = JSON.parse(localStorage.getItem('geocode') ?? '[]').map(poi => ({
+    var newMarkers: Marker[] = JSON.parse(localStorage.getItem('geocode') ?? '[]').map(poi => ({
         latitude: poi.center[1],
         longitude: poi.center[0],
         local: poi.local,
@@ -188,7 +188,6 @@ const Maps = () => {
             saveGeocode();
         }
         , []);
-
 
         const pins = 
             newMarkers.map((marker, index) => (
