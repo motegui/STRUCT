@@ -8,12 +8,12 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure the body takes at least the full viewport height */
+  min-height: 100vh; 
   margin: 0;
 }
 
 .main{
-  flex-grow: 1; /* Allow the main content to grow and push the footer to the bottom */
+  flex-grow: 1;
   background-color: #F7F5F6;
 }
 
@@ -61,15 +61,15 @@ ul {
 
 body {
   font-family: sans-serif;
-  margin: 20px;
+  margin-top: 20px;
   padding: 0;
 }
 
 .my-container{
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
+  align-items: center; 
+  justify-content: center; 
 }
 
 .my-button{
@@ -108,9 +108,9 @@ body {
 }
 
 .card-list {
-  display: grid; /* Use grid layout */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Define card width here */
-  grid-gap: 10px; /* Adjust as needed */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 10px;
   max-width: 100%;
   flex-grow: 1;
 }

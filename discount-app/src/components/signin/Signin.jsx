@@ -78,7 +78,7 @@ export default function Signin() {
       minH={'100vh'}
       align={'center'}
       justify={'center'}
-      bg="#F7F0F3">
+      bg="#E3EFFF">
       <form onSubmit={handleSubmit}>
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
@@ -112,10 +112,10 @@ export default function Signin() {
             <Stack spacing={10}>
               <Button
               type="submit"
-                bg={'pink.400'}
+                bg={'blue.400'}
                 color={'white'}
                 _hover={{
-                  bg: 'pink.300',
+                  bg: 'blue.300',
                 }}
                 onClick={handleSignIn}
                 >

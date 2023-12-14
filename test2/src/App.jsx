@@ -19,7 +19,7 @@ export default function App(){
           <Route path="/pages/MySignin" element={<MySignin/>} />
           <Route path="/pages/MyWaitingVerificationEmail" element={<MyWaitingVerificationEmail/>} />
           <Route path="/pages/Maps" element={<Maps/>} />
-          {/*<Route path="*" element={<NoPage/>}/>*/}
+          {<Route path="*" element={<NoPage/>}/>}
         </Routes>
     </>
   )
