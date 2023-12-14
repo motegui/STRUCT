@@ -30,7 +30,7 @@ export default function Home(){
       };
 
       const ContentStyles = {
-        flexGrow: 1, // Allow the content to expand and fill the remaining space
+        flexGrow: 1,
       };
 
     return (

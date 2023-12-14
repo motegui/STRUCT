@@ -41,6 +41,8 @@ export default function NavBar() {
       await supabase.auth.signOut(); // Log the user out
       setUserName(''); // Clear the user name
       setUserEmail(''); // Clear the user email
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('userName');
       navi("/");
       // Redirect the user to the login page or another appropriate page
     } catch (error) {
@@ -103,7 +105,7 @@ export default function NavBar() {
 
           {userName ? (
             <>
-            <Text whiteSpace="nowrap">Holii {userName}!</Text>
+            <Text whiteSpace="nowrap">Saludos, {userName}!</Text>
             <Button as={Link}
             to="/"
             fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'} onClick={handleLogout}>
