@@ -184,6 +184,11 @@ const Maps = () => {
 
         , [eventInfo]);
 
+        useEffect(() => {
+            saveGeocode();
+        }
+        , []);
+
 
         const pins = 
             newMarkers.map((marker, index) => (
@@ -207,11 +212,8 @@ const Maps = () => {
 
         return (
             <Box sx={{ width: '100%', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <CustomButton style={{ marginTop: '70px', marginBottom: '10px', marginRight: '10px' }} onClick={() => saveGeocode()}>GEOFETCH (press, then reload)</CustomButton>
-                    <CustomButton style={{ marginTop: '70px', marginBottom: '10px', marginLeft: '10px' }} onClick={() => localStorage.removeItem('geocode')}>CLEAR LOCALSTORAGE</CustomButton>
-                </div>
-                <MapGL initialViewState={{ ...viewport }} mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ?? ''} style={{ width: '100%', height: '80vh'}}
+               
+                <MapGL initialViewState={{ ...viewport }} mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ?? ''} style={{ width: '100%', height: '80vh', marginTop: '80px'}}
                     mapStyle="mapbox://styles/mapbox/streets-v9"
                     interactiveLayerIds={['unclustered-point']}
                     onClick={(e) => {
