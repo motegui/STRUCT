@@ -31,7 +31,6 @@ export default function Signup() {
   const navi = useNavigate();
 
   useEffect(() => {
-    // Update userEmail whenever email changes
     setUserEmail(email);
   }, [email, setUserEmail]);
 
@@ -43,9 +42,7 @@ export default function Signup() {
 
       if (error) {
         console.error(error.message);
-        // Handle sign-up error (e.g., show error message)
       } else {
-        // Registration successful, you can also update user profile here
         console.log('Registered as', user);
         setUserEmail(email);
 

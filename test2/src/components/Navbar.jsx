@@ -33,21 +33,21 @@ export default function NavBar() {
   const navi = useNavigate();
 
   const handleInputChange = (event) => {
-    setSearchValue(event.target.value); // Update the search value in the context
+    setSearchValue(event.target.value);
   };
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut(); // Log the user out
-      setUserName(''); // Clear the user name
-      setUserEmail(''); // Clear the user email
+      await supabase.auth.signOut(); 
+      setUserName(''); 
+      setUserEmail(''); 
       localStorage.removeItem('userEmail');
       localStorage.removeItem('userName');
       navi("/");
-      // Redirect the user to the login page or another appropriate page
+      
     } catch (error) {
       console.error('Error logging out:', error);
-      // Handle any errors that occur during the logout process
+      
     }
   };
 

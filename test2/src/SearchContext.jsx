@@ -25,7 +25,6 @@ export function SearchProvider({ children }) {
     const storedName = localStorage.getItem('userName');
 
     if (storedEmail && storedName) {
-      // Set user information from localStorage
       setUserEmail(storedEmail);
       setUserName(storedName);
     }
@@ -37,7 +36,7 @@ export function SearchProvider({ children }) {
     setCheckedCategories(newCheckedCategories);
   };
 
-  const updateShowOnlyFavourites = (value) => { // Function to update showOnlyFavourites
+  const updateShowOnlyFavourites = (value) => { 
     setShowOnlyFavourites(value);
   };
 
@@ -48,7 +47,7 @@ export function SearchProvider({ children }) {
   );
 }
 
-// Create a custom hook to access the context
+
 export function useSearch() {
   return useContext(SearchContext);
 }

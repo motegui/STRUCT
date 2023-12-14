@@ -21,7 +21,6 @@ function Daycard() {
       [categoryName]: !checkedCategories[categoryName],
     };
 
-    // Update the context state with the new checkbox values
     updateCheckedCategories(updatedCategories);
   };
 

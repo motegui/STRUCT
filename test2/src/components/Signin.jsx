@@ -29,7 +29,6 @@ export default function Signin() {
   const navi = useNavigate();
 
   useEffect(() => {
-    // Update userEmail whenever email changes
     setUserEmail(email);
   }, [email, setUserEmail]);
 
