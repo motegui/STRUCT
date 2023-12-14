@@ -38,7 +38,7 @@ function LocalCard() {
       boxShadow="md"
       borderRadius="md"
       margin="10"
-      maxWidth="200px"
+      maxWidth="250px"
       height="100px"
     >
         <HStack alignItems="center" justifyContent="space-between" mb={4}>

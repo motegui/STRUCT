@@ -37,8 +37,7 @@ function Daycard() {
       boxShadow="md"
       borderRadius="md"
       margin="10"
-      maxWidth="200px"
-      height="260px"
+      maxWidth="250px"
     >
       <HStack alignItems="center" justifyContent="space-between" mb={4}>
         <Text fontSize="lg" fontWeight="bold">
