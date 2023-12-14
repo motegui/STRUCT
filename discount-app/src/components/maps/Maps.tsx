@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/system'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MapGL, { GeolocateControl, Layer, Marker, NavigationControl, Popup, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import GeocoderControl from './geocoder-control';
@@ -79,7 +79,7 @@ const Maps = () => {
     async function fetchDatabase() {
         let { data: data, error } = await supabase
             .from('DESCUENTO')
-            .select('local,dia_semanal,descripcion_descuento,img_local');
+            .select('local,dia_semanal,descripcion_descuento,img_local,banco');
         return data;
     }
 
@@ -115,10 +115,11 @@ const Maps = () => {
         if (dbdata) {
             for (let i=0;i<dbdata.length;i++) {
                 imgMap.set(dbdata[i].local, dbdata[i].img_local + '\n');
+                console.log(dbdata[i].banco);
                 if (map.get(dbdata[i].local)) {
-                    map.set(dbdata[i].local, map.get(dbdata[i].local) + ',' + dbdata[i].descripcion_descuento + ',' + dbdata[i].dia_semanal + '\n');
+                    map.set(dbdata[i].local, map.get(dbdata[i].local) + ',' + dbdata[i].descripcion_descuento + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco +'\n');
                 } else {
-                    map.set(dbdata[i].local, dbdata[i].descripcion_descuento + ',' + dbdata[i].dia_semanal + '\n');
+                    map.set(dbdata[i].local, dbdata[i].descripcion_descuento + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco + '\n');
                 }
             }
            // todos los nombres de los locales sin repetir
@@ -161,9 +162,29 @@ const Maps = () => {
         longitude: poi.center[0],
         local: poi.local,
         discount: poi.discount,
-        img: poi.img
+        img: poi.img,
     }));
         const [popupInfo, setPopupInfo] = useState<Marker | null>(null);
+        const [eventInfo, setEventInfo] = useState<[number, number] | null>(null);
+
+        useEffect(() => {
+            if (eventInfo) {
+                const index = newMarkers.findIndex(marker => {
+                    const latitudeDiff = Math.abs(marker.latitude - eventInfo[1]);
+                    const longitudeDiff = Math.abs(marker.longitude - eventInfo[0]);
+                    const threshold = 0.0005; // Adjust this threshold as needed
+                    return latitudeDiff < threshold && longitudeDiff < threshold;
+                });
+                if (index == -1) {
+                    setPopupInfo(null);
+                } else {
+                    setPopupInfo(newMarkers[index]);   
+                }
+            }
+        }
+
+        , [eventInfo]);
+
 
         const pins = 
             newMarkers.map((marker, index) => (
@@ -193,24 +214,13 @@ const Maps = () => {
                 </div>
                 <MapGL initialViewState={{ ...viewport }} mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN ?? ''} style={{ width: '100%', height: '80vh'}}
                     mapStyle="mapbox://styles/mapbox/streets-v9"
-                    interactiveLayerIds={[unclusteredPointLayer.id!!]}
+                    interactiveLayerIds={['unclustered-point']}
                     onClick={(e) => {
+                        setEventInfo([e.lngLat.lng, e.lngLat.lat]);
+                        setPopupInfo(null);
+                        console.log("Event Coordinates: ", e.lngLat.lng, e.lngLat.lat)
+                        
                         e.originalEvent.stopPropagation();
-                        const index = newMarkers.findIndex(marker => {
-                            const latitudeDiff = Math.abs(marker.latitude - e.lngLat.lat);
-                            const longitudeDiff = Math.abs(marker.longitude - e.lngLat.lng);
-                            const threshold = 0.0001; // Adjust this threshold as needed
-                            return latitudeDiff < threshold && longitudeDiff < threshold;
-                        });
-                        console.log(index);
-                        if (index === -1) {
-                            setPopupInfo(null);
-                        } else {
-                            setPopupInfo(null);
-                            setPopupInfo(newMarkers[index]);
-                            console.log(newMarkers[index])
-                        }
-
                         }}>
                     <GeocoderControl mapboxAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} position="top-left" />
                     <NavigationControl position='bottom-right' />
@@ -254,21 +264,33 @@ const Maps = () => {
                         <Layer {...clusterLayer} />
                         <Layer {...clusterCountLayer} />
                         <Layer {...unclusteredPointLayer} />
-                        {popupInfo && (
-                            <Popup
-                                anchor="top"
-                                longitude={popupInfo.longitude}
-                                latitude={popupInfo.latitude}
-                                onClose={() => setPopupInfo(null)}
-                            >
-                                <div>
-                                    <h2 style={{ textAlign: 'center' }}>{popupInfo.local}</h2><br />
-                                    <img src={popupInfo.img} alt="local" width="200px" height="200px" /><br />
-                                    {popupInfo.discount}
-                                </div>
-                            </Popup>
-                        )}
                     </Source>
+                    {popupInfo && (
+                        console.log("Popup Coordinates: ", popupInfo.longitude, popupInfo.latitude),
+                        console.log(popupInfo.discount.split('}')),
+                        <Popup
+                            anchor="top"
+                            longitude={popupInfo.longitude}
+                            latitude={popupInfo.latitude}
+                            onClose={() => setPopupInfo(null)}
+                            
+                        >
+                            <div>
+                                <div>
+                                    <h2 style={{textAlign: 'center'}}>{popupInfo.local}</h2>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <img src={popupInfo.img} alt="local" style={{ maxHeight: '200px', maxWidth: '200px' }} />
+                                </div>
+                                <br />
+                                <div style={{textAlign: 'center'}}>
+                                    <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{popupInfo.discount.split('}')[2]}</div>
+                                    <div style={{ textAlign: 'justify' }}>{popupInfo.discount.split('}')[0]}</div>
+                                    <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{popupInfo.discount.split('}')[1]}</div>
+                                </div>
+                            </div>
+                        </Popup>
+                    )}
                     {/* {pins}
                     {popupInfo && (
                         <Popup

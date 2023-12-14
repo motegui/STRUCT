@@ -157,7 +157,7 @@ export default function MiniDrawer() {
               textDecoration: 'none',
             }}
           >
-            DISCOUNT
+            OfferHunter
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
