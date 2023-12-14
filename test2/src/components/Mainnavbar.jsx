@@ -45,7 +45,7 @@ const NavLink = (props) => {
         <Box bg="#F4BBD3" px={4}>
           <Flex h={16} alignItems={'center'} justifyContent={'center'}>
           <MyIcon />
-            <Box ml={2} fontWeight="bold" className="my-title-text">Struct</Box>
+            <Box ml={2} fontWeight="bold" className="my-title-text">OfferHunter</Box>
           </Flex>
         </Box>
       </>
