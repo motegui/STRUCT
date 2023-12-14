@@ -171,7 +171,7 @@ const Maps = () => {
                 const index = newMarkers.findIndex(marker => {
                     const latitudeDiff = Math.abs(marker.latitude - eventInfo[1]);
                     const longitudeDiff = Math.abs(marker.longitude - eventInfo[0]);
-                    const threshold = 0.0005; // Adjust this threshold as needed
+                    const threshold = 0.0001; // Adjust this threshold as needed
                     return latitudeDiff < threshold && longitudeDiff < threshold;
                 });
                 if (index == -1) {
