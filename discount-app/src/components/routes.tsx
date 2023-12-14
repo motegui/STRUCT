@@ -13,7 +13,6 @@ const MainRoutes = () => {
                 <>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/maps" element={<Maps />} />
-                    <Route path="/profile" element={<Profile />} />
                     <Route path="/login" element={<Signin />} />
                 </>
         </Routes>

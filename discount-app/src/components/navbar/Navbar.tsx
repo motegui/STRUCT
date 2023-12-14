@@ -253,11 +253,6 @@ export default function MiniDrawer() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <Link to="/profile">
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">Profile</Typography>
-                </MenuItem>
-              </Link>
               <MenuItem onClick={handleCloseUserMenuAndLogout}>
                 <Typography textAlign="center">Logout</Typography>
               </MenuItem>
@@ -273,8 +268,8 @@ export default function MiniDrawer() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '50%' }}>
-          {['', 'maps', 'profile'].map((text, index) => (
+        <List sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', height: '50%' }}>
+          {['', 'maps'].map((text, index) => (
             <Link to={text} key={text}>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
