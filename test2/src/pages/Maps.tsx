@@ -92,7 +92,7 @@ const Maps = () => {
     async function fetchDatabase() {
         let { data: data, error } = await supabase
             .from('DESCUENTO')
-            .select('local,dia_semanal,descripcion_descuento,img_local,banco');
+            .select('local,dia_semanal,beneficio,img_local,banco');
         return data;
     }
 
@@ -129,9 +129,9 @@ const Maps = () => {
             for (let i=0;i<dbdata.length;i++) {
                 imgMap.set(dbdata[i].local, dbdata[i].img_local + '\n');
                 if (map.get(dbdata[i].local)) {
-                    map.set(dbdata[i].local, map.get(dbdata[i].local) + ',' + dbdata[i].descripcion_descuento + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco +'\n');
+                    map.set(dbdata[i].local, map.get(dbdata[i].local) + ',' + dbdata[i].beneficio + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco +'\n');
                 } else {
-                    map.set(dbdata[i].local, dbdata[i].descripcion_descuento + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco + '\n');
+                    map.set(dbdata[i].local, dbdata[i].beneficio + '}' + dbdata[i].dia_semanal + '}' + dbdata[i].banco + '\n');
                 }
             }
            // todos los nombres de los locales sin repetir
