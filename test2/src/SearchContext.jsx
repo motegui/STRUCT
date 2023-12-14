@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Create a context
 const SearchContext = createContext();
@@ -19,6 +19,17 @@ export function SearchProvider({ children }) {
 
   const [userEmail, setUserEmail] = useState('');
   const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('userEmail');
+    const storedName = localStorage.getItem('userName');
+
+    if (storedEmail && storedName) {
+      // Set user information from localStorage
+      setUserEmail(storedEmail);
+      setUserName(storedName);
+    }
+  }, []);
   const [selectedBanks, setSelectedBanks] = useState([]);
   const [selectedLocal, setSelectedLocal] = useState([]);
 

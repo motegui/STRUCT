@@ -14,6 +14,7 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  Link,
 } from '@chakra-ui/react';
 import { useSearch } from '../SearchContext';
 import { supabase } from '../supabase';
@@ -24,12 +25,18 @@ export default function Signin() {
   const [password, setPassword] = useState('');
   const { setUserEmail , userEmail} = useSearch();
   const { setUserName , userName} = useSearch();
+  const [errorMessage, setErrorMessage] = useState('');
   const navi = useNavigate();
 
   useEffect(() => {
     // Update userEmail whenever email changes
     setUserEmail(email);
   }, [email, setUserEmail]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); //Para que funque el enter
+    handleSignIn();
+  };
 
   const handleSignIn = async () => {
     try {
@@ -39,16 +46,19 @@ export default function Signin() {
       });
 
       if (error) {
+        setErrorMessage('Email o contraseña invalidos');
         console.error(error.message);
-        // Handle error (e.g., show error message)
       } else {
         console.log('Signed in as', user);
         const name = await getName(email);
         setUserName(name);
-        console.log('name',userName);
-        console.log({userEmail});
-        navi("/");
-        // Redirect to the authenticated page or update your app state
+        console.log('name', userName);
+        console.log({ userEmail });
+        setErrorMessage(''); //
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userName', name);
+        navi('/');
+        
       }
     } catch (error) {
       console.error('Error signing in:', error.message);
@@ -67,7 +77,7 @@ export default function Signin() {
     return null;
   }
 
-  // If a match is found, data will contain the 'nombre' value
+  
   if (data) {
     return data.nombre;
   } else {
@@ -82,6 +92,7 @@ export default function Signin() {
       align={'center'}
       justify={'center'}
       bg="#F7F0F3">
+      <form onSubmit={handleSubmit}>
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'}>Inicie Sesión</Heading>
@@ -106,15 +117,19 @@ export default function Signin() {
               onChange={(e) => setPassword(e.target.value)}
               />
             </FormControl>
+            {errorMessage && (
+            <Text color="red.500" textAlign="center">
+              {errorMessage}
+            </Text>
+          )}
             <Stack spacing={10}>
-              <Stack
-                direction={{ base: 'column', sm: 'row' }}
-                align={'start'}
-                justify={'space-between'}>
-                <Checkbox>Recordarme</Checkbox>
-                <Text color={'pink.400'}>Olvidó su contraseña?</Text>
-              </Stack>
+            <Stack pt={6}>
+              <Text align={'center'}>
+                No tiene cuenta? <Link href="../pages/MySignup" color={'pink.300'}>Registrarse</Link>
+              </Text>
+            </Stack>
               <Button
+              type="submit"
                 bg={'pink.400'}
                 color={'white'}
                 _hover={{
@@ -128,6 +143,7 @@ export default function Signin() {
           </Stack>
         </Box>
       </Stack>
+      </form>
     </Flex>
   );
 }
